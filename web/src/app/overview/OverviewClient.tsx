@@ -9,15 +9,15 @@ import { vi } from 'date-fns/locale'
 import DocumentViewer from '@/components/DocumentViewer'
 
 const SECTIONS = [
-  { id: 'Question_Generate', title: 'Generate câu hỏi', theme: 'sky' },
-  { id: 'Question_Evaluate', title: 'Đánh giá câu hỏi', theme: 'navy' },
-  { id: 'Analyze_Source',    title: 'Analyze Source',   theme: 'indigo' },
-  { id: 'Solution_Report',   title: 'Solution',         theme: 'teal' },
+  { id: 'Question_Generate', title: 'Generate question', theme: 'sky' },
+  { id: 'Question_Evaluate', title: 'Evaluate question', theme: 'navy' },
+  { id: 'Analyze_Source', title: 'Analyze Source', theme: 'indigo' },
+  { id: 'Solution_Report', title: 'Solution', theme: 'teal' },
 ]
 
 const SLOT_TYPES = [
-  { id: 'DONE', label: 'Tiến độ (Đã làm)', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-  { id: 'BUG',  label: 'Vấn đề (Bug)',     icon: AlertCircle,  color: 'text-red-500', bg: 'bg-red-50' },
+  { id: 'DONE', label: 'Progress (Done)', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { id: 'BUG', label: 'Issue (Bug)', icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
 ]
 
 export default function OverviewClient({
@@ -32,7 +32,7 @@ export default function OverviewClient({
   currentUserRole: string
 }) {
   const [viewReport, setViewReport] = useState<any>(null)
-  
+
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalTarget, setModalTarget] = useState<{ category: string, type: string } | null>(null)
@@ -67,8 +67,8 @@ export default function OverviewClient({
     }
   }
 
-  const availableReports = allReports.filter(r => 
-    modalTarget && r.category === modalTarget.category && 
+  const availableReports = allReports.filter(r =>
+    modalTarget && r.category === modalTarget.category &&
     r.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -169,7 +169,7 @@ export default function OverviewClient({
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="p-4 border-b border-slate-100">
                 <input type="text" placeholder="Tìm kiếm tên báo cáo..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-navy-400 focus:ring-2 focus:ring-navy-100 outline-none text-sm" />
