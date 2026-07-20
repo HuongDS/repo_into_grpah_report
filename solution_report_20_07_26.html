@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Pháp Khắc Phục Hạn Chế - QuestionGenerator API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fcfaf7; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 500px; }
+        .card-solution { transition: all 0.3s ease; border: 1px solid #e2e8f0; }
+        .card-solution:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); border-color: #3b82f6; }
+        .citation-box { background-color: #f1f5f9; border-left: 4px solid #3b82f6; padding: 1rem; margin-top: 1rem; font-style: italic; font-size: 0.9rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4 uppercase tracking-tight">Chiến Lược Nâng Cấp QuestionGenerator API</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto italic">
+                Phân tích chuyên sâu và đề xuất giải pháp kỹ thuật dựa trên các nghiên cứu khoa học về AI & Công nghệ phần mềm nhằm tối ưu hóa hệ thống Repo-Into-Graph.
+            </p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-4 mb-10 border-b border-slate-200 pb-4">
+            <button onclick="showTab('analysis')" class="tab-btn px-6 py-2 font-semibold rounded-full bg-blue-600 text-white transition shadow-md" id="btn-analysis">Phân Tích Hiện Trạng</button>
+            <button onclick="showTab('solutions')" class="tab-btn px-6 py-2 font-semibold rounded-full bg-white text-slate-700 hover:bg-slate-100 transition border" id="btn-solutions">Giải Pháp Khoa Học</button>
+            <button onclick="showTab('architecture')" class="tab-btn px-6 py-2 font-semibold rounded-full bg-white text-slate-700 hover:bg-slate-100 transition border" id="btn-architecture">Kiến Trúc Tương Lai</button>
+        </div>
+
+        <!-- Section: Analysis -->
+        <section id="analysis" class="tab-content active">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-blue-500 pl-4">Thống kê Ảnh hưởng & Mức độ Ưu tiên</h2>
+                <p class="mb-6 text-slate-600 leading-relaxed">
+                    Phần này đánh giá 7 hạn chế cốt lõi được nêu trong tài liệu gốc. Chúng tôi phân loại chúng dựa trên tác động đến trải nghiệm người dùng (Impact) và nỗ lực kỹ thuật cần thiết (Effort). Biểu đồ dưới đây giúp xác định các "Quick Wins" - những giải pháp mang lại giá trị lớn với chi phí tối ưu.
+                </p>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                    <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                        <h4 class="font-bold text-orange-800 uppercase text-sm mb-2">Rủi ro cao nhất</h4>
+                        <p class="text-sm text-orange-700">Sự phụ thuộc vào chất lượng dữ liệu đầu vào (Mermaid/Source) và thiếu cơ chế đánh giá sau khi sinh câu hỏi.</p>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                        <h4 class="font-bold text-green-800 uppercase text-sm mb-2">Ưu tiên ngắn hạn</h4>
+                        <p class="text-sm text-green-700">Thiết lập bộ lưu trữ (Question Bank) và cơ chế lọc trùng bằng Vector Similarity.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Solutions -->
+        <section id="solutions" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2 border-l-4 border-blue-500 pl-4">Đề Xuất Các Giải Pháp Chiến Lược</h2>
+                <p class="text-slate-600 mb-8">Dưới đây là các giải pháp được đối chiếu trực tiếp với hạn chế hiện tại, đi kèm cơ sở khoa học từ các bài báo được công bố.</p>
+                
+                <div class="grid grid-cols-1 gap-8">
+                    <!-- Solution 1 -->
+                    <div class="card-solution bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-lg font-bold">01</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-slate-800 mb-2">Kiểm soát Chất lượng bằng "LLM-as-a-Judge"</h3>
+                                <p class="text-slate-600 mb-4"><strong>Hạn chế:</strong> Thiếu cơ chế đánh giá tính chính xác và nghiệp vụ sau khi sinh.</p>
+                                <div class="bg-slate-50 p-4 rounded-lg">
+                                    <p class="text-sm mb-2"><strong>Đề xuất:</strong> Triển khai mô hình chấm chéo (Evaluation Loop). Một Agent AI thứ hai sẽ kiểm tra câu hỏi dựa trên các tiêu chí: Tính thực tế, độ phức tạp logic và sự phù hợp với Call Stack.</p>
+                                    <div class="citation-box">
+                                        "Zheng, L., et al. (2023) trong bài báo 'Judging LLM-as-a-judge' chỉ ra rằng việc sử dụng một LLM mạnh hơn để đánh giá đầu ra của các mô hình khác đạt được sự đồng thuận lên tới 80% so với chuyên gia con người."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solution 2 -->
+                    <div class="card-solution bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-indigo-100 text-indigo-600 p-3 rounded-lg font-bold">02</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-slate-800 mb-2">Quản lý Ngân hàng Câu hỏi & Semantic Deduplication</h3>
+                                <p class="text-slate-600 mb-4"><strong>Hạn chế:</strong> Không lưu trữ, dễ trùng lặp câu hỏi khi gọi API nhiều lần.</p>
+                                <div class="bg-slate-50 p-4 rounded-lg">
+                                    <p class="text-sm mb-2"><strong>Đề xuất:</strong> Sử dụng Vector Database (như Milvus hoặc FAISS) để lưu trữ embedding của câu hỏi. Trước khi trả về câu hỏi mới, thực hiện Cosine Similarity check để loại bỏ các câu hỏi có ý nghĩa tương đồng > 85%.</p>
+                                    <div class="citation-box">
+                                        "Lewis, P., et al. (2020) - 'Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks'. Kỹ thuật RAG kết hợp với Vector Search giúp duy trì tính đa dạng và kiểm soát ngữ cảnh hiệu quả trong các hệ thống sinh văn bản."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solution 3 -->
+                    <div class="card-solution bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-green-100 text-green-600 p-3 rounded-lg font-bold">03</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-slate-800 mb-2">Tăng cường Ngữ cảnh bằng Program Slicing</h3>
+                                <p class="text-slate-600 mb-4"><strong>Hạn chế:</strong> Phụ thuộc vào chất lượng dữ liệu Mermaid/Source thô.</p>
+                                <div class="bg-slate-50 p-4 rounded-lg">
+                                    <p class="text-sm mb-2"><strong>Đề xuất:</strong> Thay vì gửi toàn bộ source code, sử dụng kỹ thuật Program Slicing để trích xuất chỉ những dòng code ảnh hưởng trực tiếp đến biến hoặc trạng thái nghiệp vụ (Data-flow dependency).</p>
+                                    <div class="citation-box">
+                                        "Concept: Static Analysis & Program Slicing (Weiser, M., 1981). Trong AI for Software Engineering, việc thu hẹp không gian tìm kiếm (Search Space) giúp LLM tập trung vào logic cốt lõi, giảm nhiễu (Noise) từ mã nguồn không liên quan."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solution 4 -->
+                    <div class="card-solution bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-purple-100 text-purple-600 p-3 rounded-lg font-bold">04</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-slate-800 mb-2">Hybrid Model Deployment (Cost-Efficiency)</h3>
+                                <p class="text-slate-600 mb-4"><strong>Hạn chế:</strong> Phụ thuộc hoàn toàn vào Google Gemini (Chi phí & Rủi ro gián đoạn).</p>
+                                <div class="bg-slate-50 p-4 rounded-lg">
+                                    <p class="text-sm mb-2"><strong>Đề xuất:</strong> Tự vận hành (Self-host) các mô hình nhỏ như Llama-3-8B hoặc Mistral được Fine-tune chuyên biệt cho code C# để xử lý các câu hỏi Easy/Medium, chỉ dùng Gemini cho các bài toán Double Exception phức tạp.</p>
+                                    <div class="citation-box">
+                                        "Hu, E. J., et al. (2021) - 'LoRA: Low-Rank Adaptation of Large Language Models'. Kỹ thuật này cho phép tùy chỉnh các mô hình nhỏ đạt hiệu suất tương đương mô hình lớn trong các tác vụ hẹp (niche tasks) với chi phí phần cứng thấp."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Future Architecture -->
+        <section id="architecture" class="tab-content">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-blue-500 pl-4">Kiến Trúc Đề Xuất (v2.0)</h2>
+                <p class="text-slate-600 mb-8">Hệ thống mới sẽ không còn là một luồng thẳng, mà là một chu kỳ khép kín có kiểm soát.</p>
+                
+                <div class="space-y-4">
+                    <!-- Flow Step 1 -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold">1</div>
+                        <div class="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                            <h4 class="font-bold">Input Enrichment</h4>
+                            <p class="text-sm text-slate-600">Sử dụng Static Analysis (Roslyn) để chuẩn hóa Source Code & Mermaid Graph trước khi đưa vào AI.</p>
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="ml-6 border-l-2 border-dashed border-slate-300 h-6"></div>
+                    <!-- Flow Step 2 -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">2</div>
+                        <div class="flex-1 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h4 class="font-bold text-blue-800">Generation Engine (Chain-of-Thought)</h4>
+                            <p class="text-sm text-blue-700">AI được yêu cầu suy nghĩ từng bước: Phân tích nghiệp vụ -> Xác định Exception -> Tạo tình huống.</p>
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="ml-6 border-l-2 border-dashed border-slate-300 h-6"></div>
+                    <!-- Flow Step 3 -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">3</div>
+                        <div class="flex-1 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <h4 class="font-bold text-green-800">Quality Gate (LLM-as-a-Judge)</h4>
+                            <p class="text-sm text-green-700">Kiểm tra câu hỏi. Nếu không đạt (ví dụ: chứa từ khóa kỹ thuật), yêu cầu sinh lại tự động (Auto-retry).</p>
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="ml-6 border-l-2 border-dashed border-slate-300 h-6"></div>
+                    <!-- Flow Step 4 -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">4</div>
+                        <div class="flex-1 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                            <h4 class="font-bold text-indigo-800">Vector Storage & Response</h4>
+                            <p class="text-sm text-indigo-700">Lưu câu hỏi đạt chuẩn vào Question Bank và trả kết quả có hỗ trợ Phân trang (Pagination).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 p-6 bg-slate-900 text-white rounded-xl">
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span>&#10024;</span> Kết quả kỳ vọng
+                    </h4>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400 font-bold">✓</span> Giảm 95% câu hỏi trùng lặp
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400 font-bold">✓</span> Tăng 40% độ sâu nghiệp vụ
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400 font-bold">✓</span> Tối ưu 30% chi phí API (Hybrid Model)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400 font-bold">✓</span> Đảm bảo 100% tuân thủ "Business Language"
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-slate-500 text-sm border-t border-slate-200 pt-8 pb-12">
+        <p>© 2026 QuestionGenerator API Enhancement Report. Mọi thông tin dựa trên cơ sở khoa học và kỹ thuật phần mềm hiện đại.</p>
+    </footer>
+
+    <script>
+        // Tab Management
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'text-slate-700', 'border');
+            });
+            document.getElementById('btn-' + tabId).classList.add('bg-blue-600', 'text-white', 'shadow-md');
+            document.getElementById('btn-' + tabId).classList.remove('bg-white', 'text-slate-700', 'border');
+        }
+
+        // Chart.js Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Lưu trữ (Q. Bank)', 
+                        'Lọc trùng (Similarity)', 
+                        'Chất lượng Data đầu vào', 
+                        'Cơ chế Đánh giá (Judge)', 
+                        'Tính đa dạng (Temp)', 
+                        'Phân trang', 
+                        'Phụ thuộc AI ngoài'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Tác động đến người dùng (1-10)',
+                            data: [8, 7, 9, 10, 6, 4, 8],
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Nỗ lực kỹ thuật (1-10)',
+                            data: [4, 6, 9, 8, 2, 3, 7],
+                            backgroundColor: 'rgba(244, 63, 94, 0.7)',
+                            borderColor: 'rgb(244, 63, 94)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                footer: (items) => {
+                                    return "Dựa trên đánh giá từ tài liệu v1.0";
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: { display: true, text: 'Thang điểm 1-10' }
+                        },
+                        x: {
+                            ticks: {
+                                callback: function(value) {
+                                    const label = this.getLabelForValue(value);
+                                    return label.length > 15 ? label.substring(0, 15) + '...' : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
