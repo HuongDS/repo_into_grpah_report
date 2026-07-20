@@ -195,17 +195,35 @@ export async function deletePost(postId: number) {
     if (!session?.user) return { error: 'Unauthorized' }
 
     const userId = parseInt((session.user as any).id)
-    const role   = (session.user as any).role
     const post   = await prisma.post.findUnique({ where: { id: postId } })
 
     if (!post) return { error: 'Không tìm thấy bài viết' }
-    if (post.authorId !== userId && role !== 'ADMIN')
+    if (post.authorId !== userId)
       return { error: 'Bạn không có quyền xóa bài viết này' }
 
     await prisma.post.delete({ where: { id: postId } })
     revalidatePath('/blog')
     return { success: true }
   } catch (error: any) {
+    return { error: error.message }
+  }
+}
+
+// ── Blog: Upload Image ─────────────────────────────────────────────────────────
+export async function uploadImageForBlog(formData: FormData) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) return { error: 'Unauthorized' }
+
+    const file = formData.get('file') as File | null
+    if (!file || file.size === 0) return { error: 'No file provided' }
+
+    const fileUrl = await uploadFileToSupabase(file)
+    if (!fileUrl) return { error: 'Không thể tải ảnh lên Supabase' }
+
+    return { success: true, url: fileUrl }
+  } catch (error: any) {
+    console.error('Lỗi khi upload ảnh blog:', error)
     return { error: error.message }
   }
 }

@@ -45,7 +45,7 @@ export default function BlogPostClient({ post, currentUserId, currentRole, curre
     router.push('/blog')
   }
 
-  const canDeletePost    = post.authorId === currentUserId || currentRole === 'ADMIN'
+  const canDeletePost    = post.authorId === currentUserId
   const canDeleteComment = (authorId: number) => authorId === currentUserId || currentRole === 'ADMIN'
 
   return (

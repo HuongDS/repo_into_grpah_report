@@ -1,13 +1,17 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import Image from '@tiptap/extension-image'
 import {
   Bold, Italic, List, ListOrdered, Code, Heading2, Heading3,
-  Link as LinkIcon, Quote, Undo, Redo, Strikethrough, Minus
+  Link as LinkIcon, Quote, Undo, Redo, Strikethrough, Minus,
+  ImageIcon, Loader2
 } from 'lucide-react'
+import { uploadImageForBlog } from '@/app/actions'
 
 interface RichEditorProps {
   content?: string
@@ -22,9 +26,17 @@ export default function RichEditor({
   placeholder = 'Nhập nội dung...',
   minHeight = '300px',
 }: RichEditorProps) {
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Image.configure({
+        HTMLAttributes: {
+          class: 'rounded-xl max-w-full my-4 border border-slate-200 shadow-sm',
+        },
+      }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: 'text-blue-600 underline' } }),
       Placeholder.configure({ placeholder, emptyEditorClass: 'is-editor-empty' }),
     ],
@@ -45,17 +57,21 @@ export default function RichEditor({
     active,
     title,
     children,
+    disabled = false
   }: {
     onClick: () => void
     active?: boolean
     title: string
     children: React.ReactNode
+    disabled?: boolean
   }) => (
     <button
       type="button"
       onClick={onClick}
       title={title}
+      disabled={disabled}
       className={`p-1.5 rounded-lg transition-all ${
+        disabled ? 'opacity-50 cursor-not-allowed' :
         active
           ? 'bg-navy-700 text-white'
           : 'text-slate-600 hover:bg-slate-100 hover:text-navy-700'
@@ -73,8 +89,38 @@ export default function RichEditor({
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await uploadImageForBlog(formData)
+    setUploading(false)
+    
+    // reset input
+    if (fileInputRef.current) fileInputRef.current.value = ''
+
+    if (res?.error) {
+      alert(`Lỗi upload ảnh: ${res.error}`)
+    } else if (res?.url) {
+      editor.chain().focus().setImage({ src: res.url }).run()
+    }
+  }
+
   return (
     <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm focus-within:border-navy-400 focus-within:ring-2 focus-within:ring-navy-400/20 transition-all">
+      {/* Hidden file input for images */}
+      <input 
+        type="file" 
+        accept="image/*" 
+        ref={fileInputRef} 
+        onChange={handleImageUpload} 
+        className="hidden" 
+      />
+
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-slate-100 bg-slate-50">
         <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">
@@ -109,6 +155,9 @@ export default function RichEditor({
         </ToolBtn>
         <ToolBtn onClick={setLink} active={editor.isActive('link')} title="Link">
           <LinkIcon className="w-4 h-4" />
+        </ToolBtn>
+        <ToolBtn onClick={() => fileInputRef.current?.click()} active={false} title="Chèn Ảnh" disabled={uploading}>
+          {uploading ? <Loader2 className="w-4 h-4 animate-spin text-navy-500" /> : <ImageIcon className="w-4 h-4" />}
         </ToolBtn>
         <ToolBtn onClick={() => editor.chain().focus().setHorizontalRule().run()} active={false} title="Divider">
           <Minus className="w-4 h-4" />
