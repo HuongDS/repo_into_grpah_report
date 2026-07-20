@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
@@ -18,13 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${inter.className} bg-slate-50 text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900 min-h-screen flex flex-col`}>
+      <body className={`${inter.className} bg-slate-50 text-slate-800 antialiased selection:bg-navy-200 selection:text-navy-900 min-h-screen flex flex-col`}>
         <Providers>
           <Navbar />
           {/* Main content with top padding to account for the floating navbar */}
           <main className="flex-1 w-full px-2 md:px-4 pt-36 md:pt-28 pb-12">
             {children}
           </main>
+          <Footer />
         </Providers>
       </body>
     </html>

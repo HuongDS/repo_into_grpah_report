@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { submitReport } from '@/app/actions'
 import { useSession } from 'next-auth/react'
-import { Plus, Trash2, UploadCloud, FileUp } from 'lucide-react'
+import { Plus, Trash2, UploadCloud, FileUp, ArrowLeft } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function UploadPage() {
   const { data: session } = useSession()
@@ -31,6 +32,12 @@ export default function UploadPage() {
     
     try {
       const formData = new FormData(e.currentTarget)
+      // Append references multiple times so it's a list
+      formData.delete('references')
+      references.forEach(ref => {
+        if (ref.trim()) formData.append('references', ref.trim())
+      })
+
       const res = await submitReport(formData)
       
       if (res?.error) {
@@ -47,26 +54,32 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto pt-6 pb-20">
+    <div className="max-w-3xl mx-auto pt-4 pb-20">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-navy-500 hover:text-navy-700 mb-4 transition-colors group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Quay lại Dashboard
+        </Link>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 to-navy-700 p-8 text-white shadow-sm">
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 rounded-full blur-2xl" />
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
+              <UploadCloud className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <p className="text-navy-300 text-xs font-semibold uppercase tracking-widest mb-1">Upload mới</p>
+              <h1 className="text-2xl md:text-3xl font-extrabold">Thêm Báo cáo</h1>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
       >
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 md:p-10 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-              <UploadCloud className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold">Thêm Báo cáo Mới</h1>
-              <p className="text-blue-100 mt-2 text-sm md:text-base">Hệ thống sẽ tự động trích xuất định dạng và đồng bộ lên đám mây Supabase</p>
-            </div>
-          </div>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
           
           {errorMsg && (
             <motion.div 
@@ -81,14 +94,14 @@ export default function UploadPage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2">Tiêu đề báo cáo</label>
-              <input required type="text" name="title" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="VD: Báo cáo kết quả nghiên cứu tuần 1" />
+              <input required type="text" name="title" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all" placeholder="VD: Báo cáo kết quả nghiên cứu tuần 1" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">File đính kèm</label>
                 <div className="relative w-full">
-                  <input required type="file" name="file" className="w-full px-3 py-3 pl-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
+                  <input required type="file" name="file" className="w-full px-3 py-3 pl-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-navy-50 file:text-navy-700 hover:file:bg-navy-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <FileUp className="h-5 w-5 text-slate-400" />
                   </div>
@@ -97,7 +110,7 @@ export default function UploadPage() {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Thuộc danh mục</label>
-                <select required name="category" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer">
+                <select required name="category" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all cursor-pointer">
                   <option value="Question_Evaluate">Question Evaluate</option>
                   <option value="Question_Generate">Question Generate</option>
                   <option value="Solution_Report">Solution Report</option>
@@ -118,10 +131,9 @@ export default function UploadPage() {
                 >
                   <input 
                     type="url" 
-                    name="references"
                     value={ref}
                     onChange={(e) => handleRefChange(idx, e.target.value)}
-                    className="flex-1 px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" 
+                    className="flex-1 px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all" 
                     placeholder="https://doaj.org/..." 
                   />
                   {references.length > 1 && (
@@ -132,15 +144,9 @@ export default function UploadPage() {
                 </motion.div>
               ))}
             </div>
-            <button type="button" onClick={handleAddRef} className="mt-4 px-4 py-2 text-sm flex items-center gap-2 text-blue-600 font-bold bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+            <button type="button" onClick={handleAddRef} className="mt-4 px-4 py-2 text-sm flex items-center gap-2 text-navy-600 font-bold bg-navy-50 hover:bg-navy-100 rounded-lg transition-colors">
               <Plus className="w-4 h-4" /> Thêm đường link
             </button>
-          </div>
-
-          <div className="pt-8 border-t border-slate-100">
-            <label className="block text-sm font-bold text-slate-700 mb-2">Nhật ký cập nhật hệ thống (Changelog)</label>
-            <p className="text-sm text-slate-500 mb-4">Mô tả ngắn gọn bạn đã thay đổi gì trong lần tải lên này. Sẽ được ghim ra ngoài trang chủ.</p>
-            <textarea name="updateNote" rows={3} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none" placeholder="VD: Thêm 5 câu hỏi mới vào danh mục Evaluate..."></textarea>
           </div>
 
           <div className="pt-4">
@@ -149,7 +155,7 @@ export default function UploadPage() {
               whileTap={{ scale: 0.98 }}
               disabled={loading} 
               type="submit" 
-              className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 shadow-md transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-navy-700 text-white rounded-xl font-bold text-lg hover:bg-navy-800 shadow-md shadow-navy-900/20 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
+/* ── NAVY BLUE DESIGN TOKENS ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f4f8;
+  --foreground: #0f172a;
+
+  --navy-950: #060d1a;
+  --navy-900: #0a1628;
+  --navy-800: #0f2137;
+  --navy-700: #1a3352;
+  --navy-600: #1d4ed8;
+  --navy-500: #2563eb;
+  --navy-400: #3b82f6;
+  --navy-300: #93c5fd;
+  --navy-200: #bfdbfe;
+  --navy-100: #dbeafe;
+  --navy-50:  #eff6ff;
 }
 
 @theme inline {
@@ -10,40 +23,82 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Make Tailwind navy-* classes available */
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+  --color-navy-400: var(--navy-400);
+  --color-navy-300: var(--navy-300);
+  --color-navy-200: var(--navy-200);
+  --color-navy-100: var(--navy-100);
+  --color-navy-50:  var(--navy-50);
 }
 
 body {
-  background-color: #f8fafc;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
-/* Custom Scrollbar */
+/* ── CUSTOM SCROLLBAR ── */
 .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #cbd5e1; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
 
-/* Prose / Markdown styles for DocumentViewer */
-.md-prose h1 { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin: 1.5rem 0 0.75rem; line-height: 1.2; }
-.md-prose h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin: 1.5rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid #e2e8f0; }
-.md-prose h3 { font-size: 1.1rem; font-weight: 700; color: #334155; margin: 1.2rem 0 0.5rem; }
-.md-prose h4, .md-prose h5 { font-size: 1rem; font-weight: 600; color: #475569; margin: 1rem 0 0.4rem; }
+/* ── MARKDOWN / PROSE STYLES (DocumentViewer + Blog) ── */
+.md-prose h1 { font-size: 1.75rem; font-weight: 800; color: #0a1628; margin: 1.5rem 0 0.75rem; line-height: 1.2; }
+.md-prose h2 { font-size: 1.35rem; font-weight: 700; color: #0f2137; margin: 1.5rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid #e2e8f0; }
+.md-prose h3 { font-size: 1.1rem; font-weight: 700; color: #1a3352; margin: 1.2rem 0 0.5rem; }
+.md-prose h4, .md-prose h5 { font-size: 1rem; font-weight: 600; color: #334155; margin: 1rem 0 0.4rem; }
 .md-prose p  { color: #475569; line-height: 1.8; margin: 0.75rem 0; font-size: 0.95rem; }
-.md-prose a  { color: #6366f1; text-decoration: none; border-bottom: 1px solid #c7d2fe; transition: color 0.15s; }
-.md-prose a:hover { color: #4f46e5; border-color: #818cf8; }
+.md-prose a  { color: var(--navy-600); text-decoration: none; border-bottom: 1px solid var(--navy-200); transition: color 0.15s; }
+.md-prose a:hover { color: var(--navy-800); border-color: var(--navy-400); }
 .md-prose ul, .md-prose ol { color: #475569; padding-left: 1.5rem; margin: 0.75rem 0; line-height: 1.8; font-size: 0.95rem; }
 .md-prose ul { list-style-type: disc; }
 .md-prose ol { list-style-type: decimal; }
 .md-prose li { margin: 0.3rem 0; }
-.md-prose blockquote { border-left: 3px solid #818cf8; background: #f5f3ff; padding: 0.75rem 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; color: #6b7280; font-style: italic; }
-.md-prose code { background: #f1f5f9; color: #6366f1; padding: 0.2em 0.45em; border-radius: 0.35rem; font-size: 0.85em; font-family: 'Fira Code', monospace; border: 1px solid #e2e8f0; }
-.md-prose pre  { background: #0f172a; border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; margin: 1.25rem 0; }
+.md-prose blockquote { border-left: 3px solid var(--navy-500); background: var(--navy-50); padding: 0.75rem 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; color: #475569; font-style: italic; }
+.md-prose code { background: #f1f5f9; color: var(--navy-600); padding: 0.2em 0.45em; border-radius: 0.35rem; font-size: 0.85em; font-family: 'Fira Code', 'Cascadia Code', monospace; border: 1px solid #e2e8f0; }
+.md-prose pre  { background: var(--navy-900); border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; margin: 1.25rem 0; }
 .md-prose pre code { background: transparent; color: #e2e8f0; border: none; padding: 0; font-size: 0.875rem; line-height: 1.7; }
 .md-prose table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; }
-.md-prose th { background: #f8fafc; font-weight: 700; color: #334155; padding: 0.6rem 1rem; border: 1px solid #e2e8f0; text-align: left; }
+.md-prose th { background: var(--navy-50); font-weight: 700; color: var(--navy-800); padding: 0.6rem 1rem; border: 1px solid #e2e8f0; text-align: left; }
 .md-prose td { padding: 0.55rem 1rem; border: 1px solid #e2e8f0; color: #475569; }
 .md-prose tr:nth-child(even) td { background: #f8fafc; }
-.md-prose hr { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
-.md-prose strong { font-weight: 700; color: #1e293b; }
+.md-prose hr { border: none; border-top: 2px solid var(--navy-100); margin: 1.5rem 0; }
+.md-prose strong { font-weight: 700; color: var(--navy-900); }
 .md-prose em { font-style: italic; }
 .md-prose img { max-width: 100%; border-radius: 0.75rem; margin: 1rem 0; }
+.md-prose s { text-decoration: line-through; color: #94a3b8; }
 
+/* ── TIPTAP RICH EDITOR STYLES ── */
+.prose-editor { font-size: 0.95rem; color: #334155; line-height: 1.8; }
+.prose-editor p { margin: 0.5em 0; }
+.prose-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left; color: #94a3b8; pointer-events: none; height: 0;
+}
+.prose-editor h1 { font-size: 1.5rem; font-weight: 800; color: var(--navy-900); margin: 1rem 0 0.5rem; }
+.prose-editor h2 { font-size: 1.25rem; font-weight: 700; color: var(--navy-800); margin: 0.8rem 0 0.4rem; }
+.prose-editor h3 { font-size: 1.1rem; font-weight: 600; color: var(--navy-700); margin: 0.7rem 0 0.3rem; }
+.prose-editor ul { list-style: disc; padding-left: 1.5rem; margin: 0.5em 0; }
+.prose-editor ol { list-style: decimal; padding-left: 1.5rem; margin: 0.5em 0; }
+.prose-editor li { margin: 0.25em 0; }
+.prose-editor blockquote { border-left: 3px solid var(--navy-400); padding: 0.5rem 1rem; margin: 0.75rem 0; background: var(--navy-50); border-radius: 0 0.5rem 0.5rem 0; color: #64748b; font-style: italic; }
+.prose-editor code { background: #f1f5f9; color: var(--navy-600); padding: 0.15em 0.35em; border-radius: 0.25rem; font-size: 0.85em; font-family: monospace; border: 1px solid #e2e8f0; }
+.prose-editor pre  { background: var(--navy-900); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin: 0.75rem 0; }
+.prose-editor pre code { background: transparent; color: #e2e8f0; border: none; padding: 0; }
+.prose-editor a { color: var(--navy-600); text-decoration: underline; }
+.prose-editor strong { font-weight: 700; color: var(--navy-900); }
+.prose-editor s { text-decoration: line-through; color: #94a3b8; }
+.prose-editor hr { border: none; border-top: 2px solid #e2e8f0; margin: 1rem 0; }
+
+/* Tiptap placeholder via extension */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left; color: #94a3b8; pointer-events: none; height: 0;
+}

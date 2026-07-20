@@ -5,7 +5,7 @@ import { vi } from 'date-fns/locale'
 import {
   FileText, Clock, Activity, CalendarDays,
   Search, ChevronLeft, ChevronRight, Eye,
-  TrendingUp, Users, Layers, SlidersHorizontal, X, User
+  TrendingUp, Users, SlidersHorizontal, X, User
 } from 'lucide-react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { useState, useMemo, useEffect } from 'react'
@@ -29,7 +29,7 @@ const FORMAT_COLORS: Record<string, string> = {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'question_evaluate': 'bg-violet-50 text-violet-700 border-violet-100',
+  'question_evaluate': 'bg-navy-50 text-navy-700 border-navy-100',
   'question_generate': 'bg-sky-50 text-sky-700 border-sky-100',
   'solution_report':   'bg-teal-50 text-teal-700 border-teal-100',
 }
@@ -98,28 +98,28 @@ export default function DashboardClient({
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-3xl"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-600/20 rounded-full blur-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-navy-600/20 rounded-full blur-2xl" />
 
         <div className="relative z-10 px-8 py-10 md:py-12">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div>
-              <p className="text-blue-300 text-xs font-semibold uppercase tracking-widest mb-2">Repo Into Graph · Hệ thống</p>
+              <p className="text-navy-300 text-xs font-semibold uppercase tracking-widest mb-2">Repo Into Graph · Hệ thống</p>
               <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3 leading-tight">Tổng quan Báo cáo</h1>
-              <p className="text-blue-200/80 text-sm max-w-lg">Theo dõi và quản lý toàn bộ báo cáo khoa học, tiến độ nghiên cứu và cập nhật mới nhất từ hệ thống.</p>
+              <p className="text-navy-200/80 text-sm max-w-lg">Theo dõi và quản lý toàn bộ báo cáo khoa học, tiến độ nghiên cứu và cập nhật mới nhất từ hệ thống.</p>
             </div>
 
             {/* Stats */}
             <div className="flex gap-3 shrink-0 flex-wrap">
               {[
                 { icon: FileText,   value: reports.length,     label: 'Báo cáo', color: 'from-blue-500 to-blue-600' },
-                { icon: TrendingUp, value: updateLogs.length,  label: 'Cập nhật', color: 'from-indigo-500 to-indigo-600' },
-                { icon: Users,      value: uploaders.length,   label: 'Người đăng', color: 'from-violet-500 to-violet-600' },
+                { icon: TrendingUp, value: updateLogs.length,  label: 'Cập nhật', color: 'from-navy-500 to-navy-600' },
+                { icon: Users,      value: uploaders.length,   label: 'Người đăng', color: 'from-teal-500 to-teal-600' },
               ].map(stat => (
                 <div key={stat.label} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl px-5 py-4 text-center min-w-[90px]">
                   <p className="text-2xl font-extrabold text-white">{stat.value}</p>
-                  <p className="text-blue-200 text-xs font-medium mt-0.5">{stat.label}</p>
+                  <p className="text-navy-200 text-xs font-medium mt-0.5">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -140,8 +140,8 @@ export default function DashboardClient({
             className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm"
           >
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <CalendarDays className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-navy-100 rounded-lg flex items-center justify-center">
+                <CalendarDays className="w-4 h-4 text-navy-600" />
               </div>
               <h2 className="text-base font-bold text-slate-800">Lọc theo ngày</h2>
             </div>
@@ -157,13 +157,13 @@ export default function DashboardClient({
           >
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                  <Activity className="w-4 h-4 text-indigo-600" />
+                <div className="w-8 h-8 bg-navy-100 rounded-lg flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-navy-600" />
                 </div>
                 <h2 className="text-base font-bold text-slate-800">Nhật ký Cập nhật</h2>
               </div>
               {updateLogs.length > 0 && (
-                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+                <span className="text-xs font-bold text-navy-600 bg-navy-50 px-2 py-0.5 rounded-full border border-navy-100">
                   {updateLogs.length}
                 </span>
               )}
@@ -177,13 +177,13 @@ export default function DashboardClient({
                 {updateLogs.map((log, idx) => (
                   <div key={log.id} className="flex gap-3 group">
                     <div className="flex flex-col items-center">
-                      <div className="w-2 h-2 bg-indigo-500 rounded-full mt-1.5 shrink-0 ring-2 ring-white" />
+                      <div className="w-2 h-2 bg-navy-500 rounded-full mt-1.5 shrink-0 ring-2 ring-white" />
                       {idx < updateLogs.length - 1 && (
-                        <div className="w-px flex-1 bg-indigo-100 mt-1 min-h-[20px]" />
+                        <div className="w-px flex-1 bg-navy-100 mt-1 min-h-[20px]" />
                       )}
                     </div>
                     <div className="pb-3 flex-1 min-w-0">
-                      <p className="text-[11px] font-semibold text-indigo-500 mb-1">
+                      <p className="text-[11px] font-semibold text-navy-500 mb-1">
                         {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
                       </p>
                       <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 rounded-xl p-2.5 border border-slate-100">
@@ -227,7 +227,7 @@ export default function DashboardClient({
                     placeholder="Tìm kiếm..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full sm:w-48 pl-9 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 shadow-sm"
+                    className="w-full sm:w-48 pl-9 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-500/20 focus:border-navy-400 shadow-sm"
                   />
                 </div>
 
@@ -236,13 +236,13 @@ export default function DashboardClient({
                   onClick={() => setShowFilters(v => !v)}
                   className={`relative p-2.5 rounded-xl border font-semibold text-sm transition-all shadow-sm ${
                     showFilters
-                      ? 'bg-violet-600 text-white border-violet-600'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-violet-300 hover:text-violet-600'
+                      ? 'bg-navy-600 text-white border-navy-600'
+                      : 'bg-white text-slate-500 border-slate-200 hover:border-navy-300 hover:text-navy-600'
                   }`}
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   {activeFilterCount > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                       {activeFilterCount}
                     </span>
                   )}
@@ -271,8 +271,8 @@ export default function DashboardClient({
                             onClick={() => setFormatFilter(f)}
                             className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
                               formatFilter === f
-                                ? 'bg-violet-600 text-white border-violet-600'
-                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-violet-200'
+                                ? 'bg-navy-600 text-white border-navy-600'
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-navy-200'
                             }`}
                           >
                             {f === 'ALL' ? 'Tất cả' : f.toUpperCase()}
@@ -289,7 +289,7 @@ export default function DashboardClient({
                       <select
                         value={uploaderFilter}
                         onChange={e => setUploaderFilter(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-xl px-3 py-1.5 outline-none focus:border-violet-400 cursor-pointer"
+                        className="w-full bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-xl px-3 py-1.5 outline-none focus:border-navy-400 cursor-pointer"
                       >
                         <option value="ALL">Tất cả</option>
                         {uploaders.map(u => <option key={u} value={u}>{u}</option>)}
@@ -306,8 +306,8 @@ export default function DashboardClient({
                             onClick={() => setSortBy(opt.value as any)}
                             className={`flex-1 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                               sortBy === opt.value
-                                ? 'bg-violet-600 text-white border-violet-600'
-                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-violet-200'
+                                ? 'bg-navy-600 text-white border-navy-600'
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-navy-200'
                             }`}
                           >
                             {opt.label}
@@ -318,7 +318,7 @@ export default function DashboardClient({
 
                     {activeFilterCount > 0 && (
                       <div className="sm:col-span-3 flex justify-end pt-2 border-t border-slate-100">
-                        <button onClick={handleClearFilters} className="text-xs font-semibold text-rose-500 hover:text-rose-600 flex items-center gap-1">
+                        <button onClick={handleClearFilters} className="text-xs font-semibold text-red-500 hover:text-red-600 flex items-center gap-1">
                           <X className="w-3.5 h-3.5" /> Xóa bộ lọc
                         </button>
                       </div>
@@ -337,7 +337,7 @@ export default function DashboardClient({
               </div>
               <p className="text-slate-500 font-medium">Không tìm thấy báo cáo nào.</p>
               {activeFilterCount > 0 && (
-                <button onClick={handleClearFilters} className="text-xs text-violet-600 font-semibold hover:underline">
+                <button onClick={handleClearFilters} className="text-xs text-navy-600 font-semibold hover:underline">
                   Xóa bộ lọc
                 </button>
               )}
@@ -362,12 +362,12 @@ export default function DashboardClient({
                     variants={item}
                     whileHover={{ x: 4, transition: { duration: 0.15 } }}
                     onClick={() => setViewReport(report)}
-                    className="group bg-white rounded-2xl px-5 py-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-violet-100 transition-all cursor-pointer"
+                    className="group bg-white rounded-2xl px-5 py-4 border border-slate-100 shadow-sm hover:shadow-md hover:border-navy-100 transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-4">
                       {/* Icon */}
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-violet-50 group-hover:border-violet-100 flex items-center justify-center shrink-0 transition-all">
-                        <FileText className="w-5 h-5 text-slate-400 group-hover:text-violet-500 transition-colors" />
+                      <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-navy-50 group-hover:border-navy-100 flex items-center justify-center shrink-0 transition-all">
+                        <FileText className="w-5 h-5 text-slate-400 group-hover:text-navy-500 transition-colors" />
                       </div>
 
                       {/* Content */}
@@ -380,7 +380,7 @@ export default function DashboardClient({
                             {report.format}
                           </span>
                         </div>
-                        <h3 className="font-semibold text-sm text-slate-800 group-hover:text-violet-700 transition-colors truncate">
+                        <h3 className="font-semibold text-sm text-slate-800 group-hover:text-navy-700 transition-colors truncate">
                           {report.title}
                         </h3>
                         <div className="flex items-center gap-3 mt-1">
@@ -389,7 +389,7 @@ export default function DashboardClient({
                             {format(new Date(report.createdAt), 'dd MMM yyyy HH:mm', { locale: vi })}
                           </span>
                           <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white text-[8px] font-bold uppercase">
+                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-navy-400 to-navy-600 flex items-center justify-center text-white text-[8px] font-bold uppercase">
                               {report.uploader.username.charAt(0)}
                             </div>
                             {report.uploader.username}
@@ -399,7 +399,7 @@ export default function DashboardClient({
 
                       {/* View arrow */}
                       <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Eye className="w-4 h-4 text-violet-500" />
+                        <Eye className="w-4 h-4 text-navy-500" />
                       </div>
                     </div>
                   </motion.div>
@@ -414,7 +414,7 @@ export default function DashboardClient({
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-violet-600 hover:border-violet-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-navy-600 hover:border-navy-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -424,8 +424,8 @@ export default function DashboardClient({
                   onClick={() => setCurrentPage(pg)}
                   className={`w-8 h-8 rounded-xl text-sm font-bold transition-all ${
                     pg === currentPage
-                      ? 'bg-violet-600 text-white shadow-md shadow-violet-200'
-                      : 'bg-white border border-slate-200 text-slate-500 hover:border-violet-200 hover:text-violet-600'
+                      ? 'bg-navy-600 text-white shadow-md shadow-navy-200'
+                      : 'bg-white border border-slate-200 text-slate-500 hover:border-navy-200 hover:text-navy-600'
                   }`}
                 >
                   {pg}
@@ -434,7 +434,7 @@ export default function DashboardClient({
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-violet-600 hover:border-violet-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-navy-600 hover:border-navy-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

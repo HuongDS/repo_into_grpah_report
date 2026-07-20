@@ -20,7 +20,7 @@ const formatColorMap: Record<string, { bg: string; text: string; border: string 
   '.pdf': { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-100' },
   '.md': { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100' },
   '.html': { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-100' },
-  '.docx': { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100' },
+  '.docx': { bg: 'bg-navy-50', text: 'text-navy-600', border: 'border-navy-100' },
 }
 
 export default function DocumentViewer({
@@ -91,8 +91,8 @@ export default function DocumentViewer({
       return (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <div className="relative w-16 h-16">
-            <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+            <div className="absolute inset-0 rounded-full border-4 border-navy-100"></div>
+            <div className="absolute inset-0 rounded-full border-4 border-navy-600 border-t-transparent animate-spin"></div>
           </div>
           <p className="text-slate-500 font-medium animate-pulse">Đang tải tài liệu...</p>
         </div>
@@ -113,7 +113,7 @@ export default function DocumentViewer({
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-navy-600 hover:bg-navy-700 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
           >
             <ExternalLink className="w-4 h-4" />
             Mở trong tab mới
@@ -138,7 +138,7 @@ export default function DocumentViewer({
     if (fmt === '.html') {
       if (!htmlContent) return (
         <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-navy-500" />
         </div>
       )
       return (
@@ -181,7 +181,7 @@ export default function DocumentViewer({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-navy-600 hover:bg-navy-700 text-white rounded-xl font-semibold transition-all"
         >
           <ExternalLink className="w-4 h-4" />
           Mở file gốc
@@ -236,7 +236,7 @@ export default function DocumentViewer({
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Mở trong tab mới"
-                  className="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"
+                  className="p-2 rounded-xl text-slate-400 hover:text-navy-600 hover:bg-navy-50 transition-all"
                 >
                   <ExternalLink className="w-5 h-5" />
                 </a>
