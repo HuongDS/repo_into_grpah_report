@@ -1,65 +1,96 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
-export function CalendarFilter({ activeDates }: { activeDates: string[] }) {
+export default function CalendarFilter({ selectedDateStr }: { selectedDateStr?: string }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedDateParam = searchParams.get('date')
-  const selectedDate = selectedDateParam ? parseISO(selectedDateParam) : new Date()
-
-  const monthStart = startOfMonth(selectedDate)
-  const monthEnd = endOfMonth(selectedDate)
-  const startDate = monthStart // We could add padding for grid here but keep it simple
+  const today = new Date()
   
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
+  // Default to the selected date's month, or current month
+  const initialDate = selectedDateStr ? new Date(selectedDateStr) : today
+  const [currentMonth, setCurrentMonth] = useState(new Date(initialDate.getFullYear(), initialDate.getMonth(), 1))
 
-  const handleDateClick = (date: Date) => {
-    const formatted = format(date, 'yyyy-MM-dd')
-    router.push(`/?date=${formatted}`)
+  const handleDateClick = (day: number) => {
+    const selected = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    const yyyy = selected.getFullYear()
+    const mm = String(selected.getMonth() + 1).padStart(2, '0')
+    const dd = String(selected.getDate()).padStart(2, '0')
+    router.push(`/?date=${yyyy}-${mm}-${dd}`)
   }
 
+  const handleClear = () => {
+    router.push('/')
+  }
+
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
+  const firstDayIndex = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
+
+  const days = []
+  for (let i = 0; i < firstDayIndex; i++) days.push(null)
+  for (let i = 1; i <= daysInMonth; i++) days.push(i)
+
+  const monthNames = [
+    'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+  ]
+
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-slate-800">{format(selectedDate, 'MMMM yyyy')}</h3>
-        <button 
-          onClick={() => router.push('/')}
-          className="text-xs text-indigo-600 hover:underline"
-        >
-          Today
+    <div className="w-full select-none">
+      <div className="flex justify-between items-center mb-4 px-2">
+        <button onClick={prevMonth} className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <span className="font-bold text-slate-800 text-sm tracking-wide">
+          {monthNames[currentMonth.getMonth()]} - {currentMonth.getFullYear()}
+        </span>
+        <button onClick={nextMonth} className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500">
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2 text-slate-500 font-medium">
-        <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+      
+      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-2">
+        {['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].map(d => <div key={d} className="py-2">{d}</div>)}
       </div>
-      <div className="grid grid-cols-7 gap-1 text-sm">
-        {Array.from({ length: monthStart.getDay() }).map((_, i) => (
-          <div key={`empty-${i}`} className="p-2" />
-        ))}
-        {days.map((day) => {
-          const isSelected = isSameDay(day, selectedDate) && selectedDateParam
-          const dateStr = format(day, 'yyyy-MM-dd')
-          const hasReport = activeDates.includes(dateStr)
+      
+      <div className="grid grid-cols-7 gap-1">
+        {days.map((d, i) => {
+          if (d === null) return <div key={i} className="h-10" />
+          
+          const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+          const isSelected = selectedDateStr === dateStr
+          const isToday = today.getDate() === d && today.getMonth() === currentMonth.getMonth() && today.getFullYear() === currentMonth.getFullYear()
 
           return (
-            <button
-              key={day.toString()}
-              onClick={() => handleDateClick(day)}
-              className={`
-                p-2 rounded-lg flex items-center justify-center relative transition-all
-                ${isSelected ? 'bg-indigo-600 text-white font-bold shadow-md' : 'text-slate-700 hover:bg-slate-100'}
-              `}
+            <button 
+              key={i} 
+              onClick={() => handleDateClick(d)}
+              className={`h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-all duration-200
+                ${isSelected 
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-bold transform scale-105' 
+                  : isToday 
+                    ? 'bg-blue-50 text-blue-600 font-bold hover:bg-blue-100'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
             >
-              <span>{format(day, 'd')}</span>
-              {hasReport && !isSelected && (
-                <span className="absolute bottom-1 w-1 h-1 bg-indigo-500 rounded-full"></span>
-              )}
+              {d}
             </button>
           )
         })}
       </div>
+
+      {selectedDateStr && (
+        <button 
+          onClick={handleClear}
+          className="mt-6 w-full py-2.5 bg-red-50 text-red-600 font-medium text-sm rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+        >
+          <X className="w-4 h-4" /> Bỏ chọn ngày
+        </button>
+      )}
     </div>
   )
 }

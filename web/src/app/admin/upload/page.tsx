@@ -3,18 +3,16 @@
 import { useState } from 'react'
 import { submitReport } from '@/app/actions'
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, UploadCloud, FileUp } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function UploadPage() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const [references, setReferences] = useState<string[]>([''])
   const [loading, setLoading] = useState(false)
 
-  if (status === 'loading') return <div className="p-8 text-center">Đang tải...</div>
-  if (!session) {
-    redirect('/api/auth/signin')
-  }
+  // Nếu session chưa sãn sàng thì kệ (middleware đã lo việc bắt đăng nhập)
+  if (!session) return null 
 
   const handleAddRef = () => setReferences([...references, ''])
   const handleRemoveRef = (idx: number) => setReferences(references.filter((_, i) => i !== idx))
@@ -25,88 +23,127 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Thêm Báo cáo Mới</h1>
-      
-      <form action={async (formData) => {
-        setLoading(true)
-        try {
-          await submitReport(formData)
-        } catch (error) {
-          console.error(error)
-          alert('Có lỗi xảy ra khi thêm báo cáo!')
-          setLoading(false)
-        }
-      }} className="space-y-6">
+    <div className="max-w-3xl mx-auto pt-6 pb-20">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden"
+      >
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-10 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+              <UploadCloud className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">Thêm Báo cáo Mới</h1>
+              <p className="text-blue-100 mt-2">Hệ thống sẽ tự động đồng bộ file của bạn lên Google Drive</p>
+            </div>
+          </div>
+        </div>
         
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Tiêu đề báo cáo</label>
-            <input required type="text" name="title" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="VD: Báo cáo tiến độ tuần 1" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">File Báo Cáo (Sẽ tự động upload lên Google Drive)</label>
-            <input required type="file" name="file" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" accept=".pdf,.docx,.md,.html" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+        <form action={async (formData) => {
+          setLoading(true)
+          try {
+            await submitReport(formData)
+          } catch (error) {
+            console.error(error)
+            alert('Có lỗi xảy ra khi thêm báo cáo! Hãy chắc chắn bạn đã đính kèm đúng loại file.')
+            setLoading(false)
+          }
+        }} className="p-8 md:p-10 space-y-8">
+          
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Định dạng</label>
-              <select required name="format" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <option value=".pdf">.pdf</option>
-                <option value=".docx">.docx</option>
-                <option value=".md">.md</option>
-                <option value=".html">.html</option>
-              </select>
+              <label className="block text-sm font-bold text-slate-700 mb-2">Tiêu đề báo cáo</label>
+              <input required type="text" name="title" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="VD: Báo cáo kết quả nghiên cứu tuần 1" />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
-              <select required name="category" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <option value="Question_Evaluate">Question Evaluate</option>
-                <option value="Question_Generate">Question Generate</option>
-                <option value="Solution_Report">Solution Report</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
-        <div className="pt-4 border-t">
-          <label className="block text-sm font-medium text-slate-700 mb-2">Nguồn bài báo khoa học tham khảo</label>
-          <div className="space-y-3">
-            {references.map((ref, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input 
-                  type="url" 
-                  name="references"
-                  value={ref}
-                  onChange={(e) => handleRefChange(idx, e.target.value)}
-                  className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
-                  placeholder="Link URL bài báo..." 
-                />
-                {references.length > 1 && (
-                  <button type="button" onClick={() => handleRemoveRef(idx)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                )}
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">File đính kèm</label>
+              <div className="relative w-full">
+                <input required type="file" name="file" className="w-full px-5 py-3 pl-14 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <FileUp className="h-5 w-5 text-slate-400" />
+                </div>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Định dạng file</label>
+                <select required name="format" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer">
+                  <option value=".pdf">.pdf (Khuyên dùng)</option>
+                  <option value=".docx">.docx</option>
+                  <option value=".md">.md</option>
+                  <option value=".html">.html</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Thuộc danh mục</label>
+                <select required name="category" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer">
+                  <option value="Question_Evaluate">Question Evaluate</option>
+                  <option value="Question_Generate">Question Generate</option>
+                  <option value="Solution_Report">Solution Report</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <button type="button" onClick={handleAddRef} className="mt-3 text-sm flex items-center gap-1 text-indigo-600 font-medium hover:underline">
-            <Plus className="w-4 h-4" /> Thêm nguồn tham khảo
-          </button>
-        </div>
 
-        <div className="pt-4 border-t">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Cập nhật hệ thống (Tùy chọn)</label>
-          <p className="text-xs text-slate-500 mb-2">Ghi chú những thay đổi mới nhất (nếu có). Ghi chú này sẽ hiện ở trang chủ.</p>
-          <textarea name="updateNote" rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Mô tả cập nhật..."></textarea>
-        </div>
+          <div className="pt-8 border-t border-slate-100">
+            <label className="block text-sm font-bold text-slate-700 mb-4">Các nguồn tài liệu tham khảo (Tùy chọn)</label>
+            <div className="space-y-4">
+              {references.map((ref, idx) => (
+                <motion.div 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  key={idx} 
+                  className="flex gap-3"
+                >
+                  <input 
+                    type="url" 
+                    name="references"
+                    value={ref}
+                    onChange={(e) => handleRefChange(idx, e.target.value)}
+                    className="flex-1 px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" 
+                    placeholder="https://doaj.org/..." 
+                  />
+                  {references.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveRef(idx)} className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 bg-slate-50 hover:border-red-100 border border-slate-200 rounded-xl transition-all">
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+            <button type="button" onClick={handleAddRef} className="mt-4 px-4 py-2 text-sm flex items-center gap-2 text-blue-600 font-bold bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+              <Plus className="w-4 h-4" /> Thêm đường link
+            </button>
+          </div>
 
-        <button disabled={loading} type="submit" className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50">
-          {loading ? 'Đang xử lý...' : 'Lưu Báo Cáo'}
-        </button>
-      </form>
+          <div className="pt-8 border-t border-slate-100">
+            <label className="block text-sm font-bold text-slate-700 mb-2">Nhật ký cập nhật hệ thống (Changelog)</label>
+            <p className="text-sm text-slate-500 mb-4">Mô tả ngắn gọn bạn đã thay đổi gì trong lần tải lên này. Sẽ được ghim ra ngoài trang chủ.</p>
+            <textarea name="updateNote" rows={3} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none" placeholder="VD: Thêm 5 câu hỏi mới vào danh mục Evaluate..."></textarea>
+          </div>
+
+          <div className="pt-4">
+            <motion.button 
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={loading} 
+              type="submit" 
+              className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Đang đẩy file lên Drive...
+                </>
+              ) : 'Xác nhận Lưu Báo cáo'}
+            </motion.button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   )
 }
