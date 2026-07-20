@@ -269,3 +269,66 @@ export async function deleteComment(commentId: number) {
     return { error: error.message }
   }
 }
+
+// ── Pinned Reports ─────────────────────────────────────────────────────────────
+export async function pinReport(category: string, type: string, reportId: number) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) return { error: 'Unauthorized' }
+    const role = (session.user as any).role
+    const userId = parseInt((session.user as any).id)
+
+    // Kiểm tra quyền
+    const report = await prisma.report.findUnique({ where: { id: reportId } })
+    if (!report) return { error: 'Báo cáo không tồn tại' }
+    
+    if (role !== 'ADMIN' && report.uploaderId !== userId) {
+      return { error: 'Bạn không có quyền ghim báo cáo này (Chỉ dành cho Admin hoặc người tạo)' }
+    }
+
+    await prisma.pinnedReport.upsert({
+      where: {
+        category_type: { category, type }
+      },
+      update: {
+        reportId
+      },
+      create: {
+        category,
+        type,
+        reportId
+      }
+    })
+
+    revalidatePath('/overview')
+    return { success: true }
+  } catch (error: any) {
+    return { error: error.message || 'Lỗi server' }
+  }
+}
+
+export async function unpinReport(id: number) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) return { error: 'Unauthorized' }
+    const role = (session.user as any).role
+    const userId = parseInt((session.user as any).id)
+
+    const pinned = await prisma.pinnedReport.findUnique({ 
+      where: { id },
+      include: { report: true }
+    })
+    
+    if (!pinned) return { error: 'Không tìm thấy mục ghim' }
+
+    if (role !== 'ADMIN' && pinned.report.uploaderId !== userId) {
+      return { error: 'Bạn không có quyền gỡ ghim báo cáo này' }
+    }
+
+    await prisma.pinnedReport.delete({ where: { id } })
+    revalidatePath('/overview')
+    return { success: true }
+  } catch (error: any) {
+    return { error: error.message || 'Lỗi server' }
+  }
+}

@@ -27,11 +27,12 @@ model Report {
   url         String
   format      String
   category    String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now()) @updatedAt
-  uploaderId  Int
-  uploader    User        @relation(fields: [uploaderId], references: [id])
-  references  Reference[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
+  uploaderId     Int
+  uploader       User           @relation(fields: [uploaderId], references: [id])
+  references     Reference[]
+  pinnedReports  PinnedReport[]
 }
 
 model Reference {
@@ -70,4 +71,14 @@ model Comment {
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model PinnedReport {
+  id          Int      @id @default(autoincrement())
+  category    String   // "question_generate", "question_evaluate", "analyze_source", "solution_report"
+  type        String   // "DONE" or "BUG"
+  reportId    Int      @unique
+  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@unique([category, type])
 }

@@ -113,6 +113,7 @@ export default function UploadPage() {
                 <select required name="category" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all cursor-pointer">
                   <option value="Question_Evaluate">Question Evaluate</option>
                   <option value="Question_Generate">Question Generate</option>
+                  <option value="Analyze_Source">Analyze Source</option>
                   <option value="Solution_Report">Solution Report</option>
                 </select>
               </div>

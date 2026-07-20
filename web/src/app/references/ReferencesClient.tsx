@@ -17,8 +17,9 @@ const FORMAT_COLORS: Record<string, string> = {
   '.docx': 'bg-blue-50 text-blue-600 border-blue-100',
 }
 const CATEGORY_COLORS: Record<string, string> = {
-  'question_evaluate': 'bg-violet-50 text-violet-700',
+  'question_evaluate': 'bg-navy-50 text-navy-700',
   'question_generate': 'bg-sky-50 text-sky-700',
+  'analyze_source':    'bg-indigo-50 text-indigo-700',
   'solution_report':   'bg-teal-50 text-teal-700',
 }
 

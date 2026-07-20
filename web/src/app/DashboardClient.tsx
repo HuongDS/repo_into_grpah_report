@@ -31,6 +31,7 @@ const FORMAT_COLORS: Record<string, string> = {
 const CATEGORY_COLORS: Record<string, string> = {
   'question_evaluate': 'bg-navy-50 text-navy-700 border-navy-100',
   'question_generate': 'bg-sky-50 text-sky-700 border-sky-100',
+  'analyze_source':    'bg-indigo-50 text-indigo-700 border-indigo-100',
   'solution_report':   'bg-teal-50 text-teal-700 border-teal-100',
 }
 
