@@ -5,6 +5,7 @@ import { vi } from 'date-fns/locale'
 import {
   BookOpen, FolderOpen, Search, SlidersHorizontal,
   ChevronLeft, ChevronRight, User, Eye, X, Pencil,
+  LayoutGrid, List
 } from 'lucide-react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { useState, useMemo, useEffect } from 'react'
@@ -47,6 +48,7 @@ export default function CategoryClient({
   const [showFilters,    setShowFilters]    = useState(false)
   const [currentPage,    setCurrentPage]    = useState(1)
   const [viewReport,     setViewReport]     = useState<any>(null)
+  const [viewMode,       setViewMode]       = useState<'grid' | 'table'>('grid')
 
   const uploaders = useMemo(
     () => Array.from(new Set(reports.map(r => r.uploader.username))).sort(),
@@ -126,6 +128,16 @@ export default function CategoryClient({
               </button>
             )}
           </div>
+          
+          <div className="hidden md:flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
+            <button onClick={() => setViewMode('grid')} className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-navy-600' : 'text-slate-400 hover:text-slate-600'}`}>
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button onClick={() => setViewMode('table')} className={`p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white shadow-sm text-navy-600' : 'text-slate-400 hover:text-slate-600'}`}>
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+
           <button onClick={() => setShowFilters(v => !v)}
             className={`relative flex items-center gap-2 px-4 py-3 rounded-2xl border font-semibold text-sm transition-all shadow-sm whitespace-nowrap ${
               showFilters ? 'bg-navy-700 text-white border-navy-700' : 'bg-white text-slate-600 border-slate-200 hover:border-navy-300 hover:text-navy-600'
@@ -191,7 +203,7 @@ export default function CategoryClient({
         </p>
       </motion.div>
 
-      {/* Report grid */}
+      {/* Report list */}
       {paginatedReports.length === 0 ? (
         <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
           className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm flex flex-col items-center">
@@ -204,8 +216,8 @@ export default function CategoryClient({
             Xóa bộ lọc
           </button>
         </motion.div>
-      ) : (
-        <motion.div key={`${currentPage}-${formatFilter}-${uploaderFilter}-${sortBy}`}
+      ) : viewMode === 'grid' ? (
+        <motion.div key={`grid-${currentPage}-${formatFilter}-${uploaderFilter}-${sortBy}`}
           variants={container} initial="hidden" animate="show"
           className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {paginatedReports.map(report => {
@@ -219,7 +231,7 @@ export default function CategoryClient({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-wrap gap-2 items-center">
                     <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide border ${badge}`}>{report.format}</span>
-                    <span className="text-xs text-slate-400 font-medium">{format(new Date(report.createdAt), 'dd MMM yyyy', { locale: vi })}</span>
+                    <span className="text-xs text-slate-400 font-medium">{format(new Date(report.createdAt), 'dd MMM yyyy, HH:mm', { locale: vi })}</span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     {isOwner && (
@@ -259,6 +271,64 @@ export default function CategoryClient({
               </motion.div>
             )
           })}
+        </motion.div>
+      ) : (
+        <motion.div key={`table-${currentPage}-${formatFilter}-${uploaderFilter}-${sortBy}`}
+          variants={container} initial="hidden" animate="show"
+          className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[700px]">
+            <thead className="bg-slate-50/50 text-slate-500 text-[11px] uppercase font-bold tracking-wider border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4">Tên tài liệu</th>
+                <th className="px-6 py-4 w-[120px]">Định dạng</th>
+                <th className="px-6 py-4 w-[160px]">Người đăng</th>
+                <th className="px-6 py-4 w-[180px]">Thời gian</th>
+                <th className="px-6 py-4 w-[120px] text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-sm">
+              {paginatedReports.map(report => {
+                const fmtKey = report.format?.toLowerCase() || ''
+                const badge  = FORMAT_COLORS[fmtKey] || 'bg-slate-100 text-slate-600 border-slate-200'
+                const isOwner = canEdit(report)
+                return (
+                  <motion.tr key={report.id} variants={item} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <button onClick={() => setViewReport(report)} className="font-semibold text-slate-800 hover:text-navy-600 transition-colors text-left line-clamp-2">
+                        {report.title}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-block px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide border ${badge}`}>
+                        {report.format}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-navy-600 to-navy-800 flex items-center justify-center text-white text-[10px] font-bold uppercase shrink-0">
+                          {report.uploader.username.charAt(0)}
+                        </div>
+                        <span className="font-medium text-slate-600 text-xs">{report.uploader.username}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 font-medium text-xs">
+                      {format(new Date(report.createdAt), 'dd MMM yyyy, HH:mm', { locale: vi })}
+                    </td>
+                    <td className="px-6 py-4 text-right flex items-center justify-end gap-1.5">
+                      {isOwner && (
+                        <Link href={`/admin/edit/${report.id}`} className="p-2 rounded-lg text-slate-400 hover:text-navy-600 hover:bg-navy-50 transition-all">
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                      )}
+                      <button onClick={() => setViewReport(report)} className="p-2 rounded-lg text-slate-400 hover:text-navy-600 hover:bg-navy-50 transition-all">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </motion.tr>
+                )
+              })}
+            </tbody>
+          </table>
         </motion.div>
       )}
 

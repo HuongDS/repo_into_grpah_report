@@ -130,7 +130,7 @@ export default function ReferencesClient({ reports, totalRefs, totalReports, isA
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${CATEGORY_COLORS[catKey] || 'bg-slate-100 text-slate-600'}`}>{report.category?.replace(/_/g, ' ')}</span>
                     </div>
                     <p className="font-semibold text-slate-800 truncate text-sm">{report.title}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{report.uploader.username} · {format(new Date(report.createdAt), 'dd MMM yyyy', { locale: vi })}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{report.uploader.username} · {format(new Date(report.createdAt), 'dd MMM yyyy, HH:mm', { locale: vi })}</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-xs font-bold text-navy-600 bg-navy-50 px-2.5 py-1 rounded-full border border-navy-100">
