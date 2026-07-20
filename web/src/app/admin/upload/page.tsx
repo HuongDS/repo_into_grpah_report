@@ -5,13 +5,15 @@ import { submitReport } from '@/app/actions'
 import { useSession } from 'next-auth/react'
 import { Plus, Trash2, UploadCloud, FileUp } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 
 export default function UploadPage() {
   const { data: session } = useSession()
+  const router = useRouter()
   const [references, setReferences] = useState<string[]>([''])
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
-  // Nếu session chưa sãn sàng thì kệ (middleware đã lo việc bắt đăng nhập)
   if (!session) return null 
 
   const handleAddRef = () => setReferences([...references, ''])
@@ -22,14 +24,36 @@ export default function UploadPage() {
     setReferences(newRefs)
   }
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setErrorMsg('')
+    
+    try {
+      const formData = new FormData(e.currentTarget)
+      const res = await submitReport(formData)
+      
+      if (res?.error) {
+        setErrorMsg(res.error)
+      } else if (res?.success) {
+        router.push('/')
+        router.refresh()
+      }
+    } catch (error) {
+      setErrorMsg('Lỗi mạng hoặc server không phản hồi. Vui lòng thử lại.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto pt-6 pb-20">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden"
+        className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
       >
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-10 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 md:p-10 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 pointer-events-none" />
           <div className="relative z-10 flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
@@ -37,48 +61,40 @@ export default function UploadPage() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">Thêm Báo cáo Mới</h1>
-              <p className="text-blue-100 mt-2">Hệ thống sẽ tự động đồng bộ file của bạn lên Google Drive</p>
+              <p className="text-blue-100 mt-2 text-sm md:text-base">Hệ thống sẽ tự động trích xuất định dạng và đồng bộ lên Google Drive</p>
             </div>
           </div>
         </div>
         
-        <form action={async (formData) => {
-          setLoading(true)
-          try {
-            await submitReport(formData)
-          } catch (error) {
-            console.error(error)
-            alert('Có lỗi xảy ra khi thêm báo cáo! Hãy chắc chắn bạn đã đính kèm đúng loại file.')
-            setLoading(false)
-          }
-        }} className="p-8 md:p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
           
+          {errorMsg && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 font-medium text-sm"
+            >
+              Cảnh báo: {errorMsg}
+            </motion.div>
+          )}
+
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2">Tiêu đề báo cáo</label>
               <input required type="text" name="title" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="VD: Báo cáo kết quả nghiên cứu tuần 1" />
             </div>
 
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">File đính kèm</label>
-              <div className="relative w-full">
-                <input required type="file" name="file" className="w-full px-5 py-3 pl-14 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <FileUp className="h-5 w-5 text-slate-400" />
-                </div>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Định dạng file</label>
-                <select required name="format" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer">
-                  <option value=".pdf">.pdf (Khuyên dùng)</option>
-                  <option value=".docx">.docx</option>
-                  <option value=".md">.md</option>
-                  <option value=".html">.html</option>
-                </select>
+                <label className="block text-sm font-bold text-slate-700 mb-2">File đính kèm</label>
+                <div className="relative w-full">
+                  <input required type="file" name="file" className="w-full px-3 py-3 pl-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FileUp className="h-5 w-5 text-slate-400" />
+                  </div>
+                </div>
               </div>
+
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Thuộc danh mục</label>
                 <select required name="category" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer">
@@ -133,11 +149,11 @@ export default function UploadPage() {
               whileTap={{ scale: 0.98 }}
               disabled={loading} 
               type="submit" 
-              className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 shadow-md transition-all disabled:opacity-70 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Đang đẩy file lên Drive...
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Đang xử lý tải lên...
                 </>
               ) : 'Xác nhận Lưu Báo cáo'}
             </motion.button>

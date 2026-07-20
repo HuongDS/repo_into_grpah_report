@@ -4,64 +4,71 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { uploadFileToDrive } from '@/lib/drive'
 
 export async function submitReport(formData: FormData) {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user) {
-    throw new Error('Unauthorized')
-  }
-
-  const title = formData.get('title') as string
-  const file = formData.get('file') as File | null
-  const format = formData.get('format') as string
-  const category = formData.get('category') as string
-  const updateNote = formData.get('updateNote') as string
-  const references = formData.getAll('references') as string[]
-
-  if (!title || !file || !format || !category) {
-    throw new Error('Missing required fields')
-  }
-
-  let fileUrl = ''
   try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user) {
+      return { error: 'Vui lòng đăng nhập lại (Unauthorized)' }
+    }
+
+    const title = formData.get('title') as string
+    const file = formData.get('file') as File | null
+    const category = formData.get('category') as string
+    const updateNote = formData.get('updateNote') as string
+    const references = formData.getAll('references') as string[]
+
+    if (!title || !file || !category || file.size === 0) {
+      return { error: 'Vui lòng điền đầy đủ thông tin và chọn file hợp lệ' }
+    }
+
+    // Tự động nhận diện định dạng file
+    const fileName = file.name
+    const format = fileName.includes('.') ? fileName.slice(fileName.lastIndexOf('.')).toLowerCase() : '.unknown'
+
     const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
-    if (!folderId) {
-      throw new Error('GOOGLE_DRIVE_FOLDER_ID is missing in .env')
+    if (!folderId || folderId === 'YOUR_FOLDER_ID_HERE') {
+      return { error: 'Chưa cấu hình GOOGLE_DRIVE_FOLDER_ID trong biến môi trường' }
     }
-    fileUrl = await uploadFileToDrive(file, folderId) || ''
-  } catch (error: any) {
-    throw new Error(error.message)
-  }
 
-  // Create the report
-  const report = await prisma.report.create({
-    data: {
-      title,
-      url: fileUrl,
-      format,
-      category,
-      uploaderId: parseInt((session.user as any).id),
-      references: {
-        create: references.filter(r => r.trim() !== '').map(r => ({
-          sourceUrl: r
-        }))
-      }
+    // Upload lên Google Drive
+    const fileUrl = await uploadFileToDrive(file, folderId)
+    if (!fileUrl) {
+      return { error: 'Không thể lấy được đường dẫn file từ Google Drive' }
     }
-  })
 
-  // Create update log if provided
-  if (updateNote && updateNote.trim() !== '') {
-    await prisma.updateLog.create({
+    // Lưu vào Database
+    await prisma.report.create({
       data: {
-        description: updateNote
+        title,
+        url: fileUrl,
+        format,
+        category,
+        uploaderId: parseInt((session.user as any).id),
+        references: {
+          create: references.filter(r => r.trim() !== '').map(r => ({
+            sourceUrl: r
+          }))
+        }
       }
     })
-  }
 
-  revalidatePath('/')
-  revalidatePath(`/reports/${category}`)
-  redirect('/')
+    if (updateNote && updateNote.trim() !== '') {
+      await prisma.updateLog.create({
+        data: {
+          description: updateNote
+        }
+      })
+    }
+
+    revalidatePath('/')
+    revalidatePath(`/reports/${category}`)
+    
+    return { success: true }
+  } catch (error: any) {
+    console.error("Lỗi khi upload server action:", error)
+    return { error: error.message || 'Lỗi hệ thống không xác định. Vui lòng kiểm tra lại cấu hình credentials.json.' }
+  }
 }
