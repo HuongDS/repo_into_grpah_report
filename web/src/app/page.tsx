@@ -15,13 +15,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ d
   const reports = await prisma.report.findMany({
     where: dateFilter,
     orderBy: { createdAt: 'desc' },
-    take: 10,
+    take: selectedDateStr ? undefined : 20,
     include: { uploader: true }
   })
 
   const updateLogs = await prisma.updateLog.findMany({
+    where: dateFilter,
     orderBy: { createdAt: 'desc' },
-    take: 10
+    take: selectedDateStr ? undefined : 20
   })
 
   return <DashboardClient selectedDateStr={selectedDateStr} reports={reports} updateLogs={updateLogs} />
