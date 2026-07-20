@@ -69,7 +69,7 @@ export async function updateReport(reportId: number, title: string, refs: { id?:
     const report  = await prisma.report.findUnique({ where: { id: reportId } })
 
     if (!report) return { error: 'Không tìm thấy báo cáo' }
-    if (report.uploaderId !== userId && role !== 'ADMIN')
+    if (report.uploaderId !== userId)
       return { error: 'Bạn không có quyền chỉnh sửa báo cáo này' }
 
     // Delete all old references then recreate
@@ -112,7 +112,7 @@ export async function deleteReport(reportId: number) {
     const report = await prisma.report.findUnique({ where: { id: reportId } })
 
     if (!report) return { error: 'Không tìm thấy báo cáo' }
-    if (report.uploaderId !== userId && role !== 'ADMIN')
+    if (report.uploaderId !== userId)
       return { error: 'Bạn không có quyền xóa báo cáo này' }
 
     const reportTitle    = report.title

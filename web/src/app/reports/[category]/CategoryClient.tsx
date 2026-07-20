@@ -78,7 +78,7 @@ export default function CategoryClient({
     setSearchQuery(''); setFormatFilter('ALL'); setUploaderFilter('ALL'); setSortBy('newest')
   }
 
-  const canEdit = (report: any) => currentUserId === report.uploaderId || currentUserRole === 'ADMIN'
+  const canEdit = (report: any) => currentUserId === report.uploaderId
 
   return (
     <div className="w-[95%] lg:w-[90%] max-w-7xl mx-auto pt-4 pb-24 space-y-6">

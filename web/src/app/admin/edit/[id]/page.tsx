@@ -21,7 +21,7 @@ export default async function EditReportPage({ params }: { params: Promise<{ id:
   const userId = parseInt((session.user as any).id)
   const role   = (session.user as any).role
 
-  if (report.uploaderId !== userId && role !== 'ADMIN') {
+  if (report.uploaderId !== userId) {
     redirect('/')
   }
 
