@@ -22,7 +22,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {/* Main content with top padding to account for the floating navbar */}
-          <main className="flex-1 w-full px-4 pt-28 pb-12">
+          <main className="flex-1 w-full px-2 md:px-4 pt-36 md:pt-28 pb-12">
             {children}
           </main>
         </Providers>
