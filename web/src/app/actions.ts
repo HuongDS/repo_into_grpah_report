@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import { uploadFileToDrive } from '@/lib/drive'
+import { uploadFileToSupabase } from '@/lib/supabase'
 
 export async function submitReport(formData: FormData) {
   try {
@@ -28,15 +28,10 @@ export async function submitReport(formData: FormData) {
     const fileName = file.name
     const format = fileName.includes('.') ? fileName.slice(fileName.lastIndexOf('.')).toLowerCase() : '.unknown'
 
-    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
-    if (!folderId || folderId === 'YOUR_FOLDER_ID_HERE') {
-      return { error: 'Chưa cấu hình GOOGLE_DRIVE_FOLDER_ID trong biến môi trường' }
-    }
-
-    // Upload lên Google Drive
-    const fileUrl = await uploadFileToDrive(file, folderId)
+    // Upload lên Supabase Storage
+    const fileUrl = await uploadFileToSupabase(file)
     if (!fileUrl) {
-      return { error: 'Không thể lấy được đường dẫn file từ Google Drive' }
+      return { error: 'Không thể lấy được đường dẫn file từ Supabase' }
     }
 
     // Lưu vào Database

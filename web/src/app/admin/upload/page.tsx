@@ -61,7 +61,7 @@ export default function UploadPage() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">Thêm Báo cáo Mới</h1>
-              <p className="text-blue-100 mt-2 text-sm md:text-base">Hệ thống sẽ tự động trích xuất định dạng và đồng bộ lên Google Drive</p>
+              <p className="text-blue-100 mt-2 text-sm md:text-base">Hệ thống sẽ tự động trích xuất định dạng và đồng bộ lên đám mây Supabase</p>
             </div>
           </div>
         </div>
