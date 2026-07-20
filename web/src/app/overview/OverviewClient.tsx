@@ -88,7 +88,7 @@ export default function OverviewClient({
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {SECTIONS.map(section => (
-          <div key={section.id} className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+          <div key={section.id} className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/50 rounded-3xl overflow-hidden flex flex-col">
             <div className={`px-6 py-4 border-b border-slate-100 bg-${section.theme}-50/50`}>
               <h2 className={`text-lg font-bold text-${section.theme}-700 flex items-center gap-2`}>
                 <div className={`w-3 h-3 rounded-full bg-${section.theme}-500 shadow-sm`} />

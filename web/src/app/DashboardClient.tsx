@@ -138,7 +138,7 @@ export default function DashboardClient({
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm"
+            className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/50 rounded-2xl p-5"
           >
             <div className="flex items-center gap-2.5 mb-5">
               <div className="w-8 h-8 bg-navy-100 rounded-lg flex items-center justify-center">
@@ -154,7 +154,7 @@ export default function DashboardClient({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm"
+            className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-xl shadow-slate-200/50 rounded-2xl p-5"
           >
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
