@@ -37,12 +37,14 @@ export async function uploadFileToDrive(file: File, folderId: string) {
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: media,
-      fields: 'id, webViewLink, webContentLink'
+      fields: 'id, webViewLink, webContentLink',
+      supportsAllDrives: true
     })
 
     // Set permission to anyone with link can view (so users can see it)
     await drive.permissions.create({
       fileId: response.data.id as string,
+      supportsAllDrives: true,
       requestBody: {
         role: 'reader',
         type: 'anyone'
