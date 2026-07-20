@@ -1,10 +1,16 @@
 import { google } from 'googleapis'
 import { Readable } from 'stream'
+import fs from 'fs'
 
 export async function uploadFileToDrive(file: File, folderId: string) {
-  // Yêu cầu file credentials.json nằm ở thư mục gốc của project (ngang hàng với package.json)
+  // Render.com lưu Secret Files ở /etc/secrets/
+  const renderSecretPath = '/etc/secrets/credentials.json'
+  const localPath = 'credentials.json'
+  
+  const keyFilePath = fs.existsSync(renderSecretPath) ? renderSecretPath : localPath
+
   const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json',
+    keyFile: keyFilePath,
     scopes: ['https://www.googleapis.com/auth/drive.file']
   })
 
