@@ -13,7 +13,8 @@ Quy trình sử dụng kết hợp các thuật toán tìm kiếm Vector, nội 
 ### 1.1. Ánh xạ Ngữ nghĩa (Semantic Mapping)
 Mục tiêu là tìm ra các đoạn mã (Nodes) trong đồ thị có khả năng cao nhất dùng để trả lời câu hỏi.
 1. **Kiểm tra TargetedEntryPoints (Bypass Bypass)**: Nếu câu hỏi cung cấp sẵn danh sách tên hàm mục tiêu (thường do quá trình sinh câu hỏi tự động truyền vào), hệ thống sẽ dùng kỹ thuật so khớp chuỗi linh hoạt (Lenient Matching - `String.Contains`) để tìm các Nodes khớp trong O(1).
-2. **Tìm kiếm Vector (Vector Search / RAG)**: Nếu không có Target, câu hỏi được chia thành các cụm từ (Sliding Window Chunks) và nhúng (Embed) thành Vector bằng Cohere. Các vector này được so sánh Cosine Similarity với Vector của từng Node trong đồ thị để trích xuất ra lộ trình các Nodes (Extracted Path) sát nghĩa nhất.
+2. **Tìm kiếm Vector (Vector Search / RAG)**: Nếu không có Target, câu hỏi được chia thành các cụm từ (Sliding Window Chunks) và nhúng (Embed) thành Vector bằng Cohere. Các vector này được so sánh Cosine Similarity với Vector của từng Node trong đồ thị.
+   - **Ngưỡng tự động thích ứng (Dynamic/Adaptive Thresholding)**: Thay vì sử dụng một ngưỡng cố định (Hard Threshold) dễ dẫn đến việc bỏ sót hoặc lấy thừa nhiễu, hệ thống tự động tìm ra điểm Cosine Similarity cao nhất (Max Similarity) trong tập kết quả, và thiết lập một "Ngưỡng tin cậy động" (VD: `Threshold = Max(0.5, MaxSim * 0.85)`). Nhờ đó, hệ thống chỉ giữ lại những Nodes thực sự sát nghĩa nhất với ngữ cảnh hiện tại. Các Nodes vượt qua ngưỡng này sẽ được trích xuất để tạo thành `Extracted Path`.
 
 > **Nền tảng Khoa học - RAG (Retrieval-Augmented Generation)**  
 > **Nguồn trích dẫn**: *Lewis, P., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. (NeurIPS).*  
