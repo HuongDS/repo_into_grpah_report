@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { SettingsProvider } from "@/components/SettingsProvider";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-
-const inter = Inter({ subsets: ["latin"], display: 'swap' });
+import { AppSidebar } from "@/components/AppSidebar";
+import { TopBar } from "@/components/TopBar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "Repo Into Graph | System Reports",
@@ -20,15 +18,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${inter.className} bg-slate-50 text-slate-800 antialiased selection:bg-navy-200 selection:text-navy-900 min-h-screen flex flex-col`}>
+      <body className={`bg-slate-50 text-slate-800 antialiased selection:bg-navy-200 selection:text-navy-900 min-h-screen`} style={{ fontFamily: "'Google Sans', sans-serif" }}>
         <Providers>
-          <SettingsProvider>
-            <Navbar />
-            <main className="flex-1 w-full px-2 md:px-4 pb-12">
-              {children}
-            </main>
-            <Footer />
-          </SettingsProvider>
+          <TooltipProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <div className="flex flex-col flex-1 min-w-0">
+                <TopBar />
+                <main className="flex-1 w-full px-4 md:px-6 py-6 pb-12">
+                  {children}
+                </main>
+              </div>
+            </SidebarProvider>
+          </TooltipProvider>
         </Providers>
       </body>
     </html>

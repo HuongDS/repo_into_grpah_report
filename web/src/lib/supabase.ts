@@ -29,3 +29,25 @@ export async function uploadFileToSupabase(file: File) {
 
   return publicUrlData.publicUrl
 }
+
+export async function deleteFileFromSupabase(fileUrl: string) {
+  try {
+    const urlParts = fileUrl.split('/')
+    const fileName = urlParts[urlParts.length - 1]
+
+    if (!fileName) return false
+
+    const { error } = await supabase.storage
+      .from('reports')
+      .remove([fileName])
+
+    if (error) {
+      console.error('Lỗi xóa file Supabase:', error)
+      return false
+    }
+    return true
+  } catch (err) {
+    console.error('Lỗi khi parse và xóa file:', err)
+    return false
+  }
+}
