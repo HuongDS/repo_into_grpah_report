@@ -7,11 +7,7 @@ import { GitBranch, LogOut } from 'lucide-react'
 export function TopBar() {
   const { data: session } = useSession()
   
-  if (!session) return (
-    <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-slate-200 bg-white/80 backdrop-blur-md px-4">
-      <SidebarTrigger className="-ml-2 text-slate-500 hover:text-slate-800" />
-    </header>
-  )
+  if (!session) return null
   
   const role = (session.user as any)?.role
 

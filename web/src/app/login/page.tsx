@@ -99,7 +99,7 @@ export default function LoginPage() {
             className="relative z-10 mt-12 md:mt-0 flex items-center gap-3 text-sm font-semibold text-blue-200"
           >
             <ShieldCheck className="w-5 h-5" />
-            <span>Nội bộ lưu hành</span>
+            <span>Lưu hành nội bộ</span>
           </motion.div>
         </div>
 
