@@ -11,6 +11,7 @@ import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import DocumentViewer from '@/components/DocumentViewer'
+import ReportFeedback from '@/components/ReportFeedback'
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -261,12 +262,15 @@ export default function CategoryClient({
                     </div>
                     <span className="text-sm text-slate-600 font-medium">{report.uploader.username}</span>
                   </div>
-                  {report.references.length > 0 && (
-                    <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>{report.references.length} nguồn</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {report.references.length > 0 && (
+                      <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
+                        <BookOpen className="w-3.5 h-3.5" />
+                        <span>{report.references.length} nguồn</span>
+                      </div>
+                    )}
+                    <ReportFeedback reportId={report.id} reportTitle={report.title} initialCount={report._count?.feedbacks || 0} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+                  </div>
                 </div>
               </motion.div>
             )
@@ -315,6 +319,7 @@ export default function CategoryClient({
                       {format(new Date(report.createdAt), 'dd MMM yyyy, HH:mm', { locale: vi })}
                     </td>
                     <td className="px-6 py-4 text-right flex items-center justify-end gap-1.5">
+                      <ReportFeedback reportId={report.id} reportTitle={report.title} initialCount={report._count?.feedbacks || 0} currentUserId={currentUserId} currentUserRole={currentUserRole} />
                       {isOwner && (
                         <Link href={`/admin/edit/${report.id}`} className="p-2 rounded-lg text-slate-400 hover:text-navy-600 hover:bg-navy-50 transition-all">
                           <Pencil className="w-4 h-4" />

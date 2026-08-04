@@ -11,7 +11,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const reports = await prisma.report.findMany({
     where: { category },
     orderBy: { createdAt: 'desc' },
-    include: { uploader: true, references: true }
+    include: { uploader: true, references: true, _count: { select: { feedbacks: true } } }
   })
 
   const categoryName    = category.replace(/_/g, ' ')

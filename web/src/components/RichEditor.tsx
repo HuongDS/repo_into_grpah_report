@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
@@ -49,6 +49,12 @@ export default function RichEditor({
       }
     }
   })
+
+  useEffect(() => {
+    if (editor && editor.getHTML() !== content) {
+      editor.commands.setContent(content)
+    }
+  }, [content, editor])
 
   if (!editor) return null
 

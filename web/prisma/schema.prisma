@@ -11,35 +11,51 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  username   String    @unique
-  password   String
-  role       String    @default("USER") // 'ADMIN' or 'USER'
-  reports    Report[]
-  posts      Post[]
-  comments   Comment[]
-  updateLogs UpdateLog[]
-  documents  Document[]
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  password        String
+  role            String           @default("USER") // 'ADMIN' or 'USER'
+  reports         Report[]
+  posts           Post[]
+  comments        Comment[]
+  updateLogs      UpdateLog[]
+  documents       Document[]
+  reportFeedbacks ReportFeedback[]
 }
 
 model Report {
-  id          Int         @id @default(autoincrement())
-  title       String
-  url         String
-  format      String
-  category    String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @default(now()) @updatedAt
-  uploaderId     Int
-  uploader       User           @relation(fields: [uploaderId], references: [id])
-  references     Reference[]
-  pinnedReports  PinnedReport[]
+  id            Int              @id @default(autoincrement())
+  title         String
+  url           String
+  format        String
+  category      String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now()) @updatedAt
+  uploaderId    Int
+  uploader      User             @relation(fields: [uploaderId], references: [id])
+  references    Reference[]
+  pinnedReports PinnedReport[]
+  feedbacks     ReportFeedback[]
+}
+
+model ReportFeedback {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  reportId  Int
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reportId, createdAt])
+  @@index([authorId])
 }
 
 model Reference {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   reportId    Int
-  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  report      Report  @relation(fields: [reportId], references: [id], onDelete: Cascade)
   sourceUrl   String
   description String?
 }
@@ -60,7 +76,7 @@ model Document {
 model UpdateLog {
   id          Int      @id @default(autoincrement())
   description String
-  actionType  String?  // "UPLOAD", "EDIT", "DELETE", "POST", "COMMENT"
+  actionType  String? // "UPLOAD", "EDIT", "DELETE", "POST", "COMMENT"
   userId      Int?
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())
@@ -88,11 +104,11 @@ model Comment {
 }
 
 model PinnedReport {
-  id          Int      @id @default(autoincrement())
-  category    String   // "question_generate", "question_evaluate", "analyze_source", "solution_report"
-  type        String   // "DONE" or "BUG"
-  reportId    Int      @unique
-  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  id       Int    @id @default(autoincrement())
+  category String // "question_generate", "question_evaluate", "analyze_source", "solution_report"
+  type     String // "DONE" or "BUG"
+  reportId Int    @unique
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
   @@unique([category, type])
 }

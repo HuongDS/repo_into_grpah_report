@@ -301,6 +301,65 @@ export async function deleteComment(commentId: number) {
   }
 }
 
+// ── Report feedback ──────────────────────────────────────────────────────────
+export async function getReportFeedbacks(reportId: number) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return { error: "Vui lòng đăng nhập để xem phản hồi" };
+
+  const feedbacks = await prisma.reportFeedback.findMany({
+    where: { reportId },
+    include: { author: { select: { id: true, username: true } } },
+    orderBy: { createdAt: "asc" },
+  });
+  return { feedbacks };
+}
+
+export async function createReportFeedback(reportId: number, content: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return { error: "Vui lòng đăng nhập để gửi phản hồi" };
+
+  const normalizedContent = content?.trim();
+  const plainContent = normalizedContent?.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+  const hasMedia = /<(img|hr)\b/i.test(normalizedContent || "");
+  if (!plainContent && !hasMedia) return { error: "Nội dung phản hồi không được để trống" };
+  if (plainContent.length > 10000 || normalizedContent.length > 20000) return { error: "Nội dung phản hồi quá dài" };
+
+  const report = await prisma.report.findUnique({ where: { id: reportId }, select: { category: true } });
+  if (!report) return { error: "Báo cáo không tồn tại" };
+
+  const authorId = parseInt((session.user as any).id);
+  const feedback = await prisma.reportFeedback.create({
+    data: { reportId, authorId, content: normalizedContent },
+    include: { author: { select: { id: true, username: true } } },
+  });
+
+  revalidatePath(`/reports/${report.category}`);
+  revalidatePath("/");
+  return { success: true, feedback };
+}
+
+export async function deleteReportFeedback(feedbackId: number) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return { error: "Vui lòng đăng nhập lại" };
+
+  const feedback = await prisma.reportFeedback.findUnique({
+    where: { id: feedbackId },
+    include: { report: { select: { category: true } } },
+  });
+  if (!feedback) return { error: "Không tìm thấy phản hồi" };
+
+  const userId = parseInt((session.user as any).id);
+  const role = (session.user as any).role;
+  if (feedback.authorId !== userId && role !== "ADMIN") {
+    return { error: "Bạn không có quyền xóa phản hồi này" };
+  }
+
+  await prisma.reportFeedback.delete({ where: { id: feedbackId } });
+  revalidatePath(`/reports/${feedback.report.category}`);
+  revalidatePath("/");
+  return { success: true };
+}
+
 // ── Pinned Reports ─────────────────────────────────────────────────────────────
 export async function pinReport(
   category: string,
