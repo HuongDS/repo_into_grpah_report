@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopBar } from "@/components/TopBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+const googleSans = localFont({
+  src: "../../public/Google_Sans/GoogleSans-VariableFont_GRAD,opsz,wght.ttf",
+  variable: "--font-google-sans",
+  weight: "400 900",
+  style: "normal",
+  display: "swap",
+  preload: true,
+  fallback: ["Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   title: "Repo Into Graph | System Reports",
@@ -17,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
-      <body className={`bg-slate-50 text-slate-800 antialiased selection:bg-navy-200 selection:text-navy-900 min-h-screen`} style={{ fontFamily: "'Google Sans', sans-serif" }}>
+    <html lang="vi" className={googleSans.variable}>
+      <body className={`${googleSans.className} bg-slate-50 text-slate-800 antialiased selection:bg-navy-200 selection:text-navy-900 min-h-screen`}>
         <Providers>
           <TooltipProvider>
             <SidebarProvider>

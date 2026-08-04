@@ -18,6 +18,7 @@ interface RichEditorProps {
   onChange: (html: string) => void
   placeholder?: string
   minHeight?: string
+  maxHeight?: string
 }
 
 export default function RichEditor({
@@ -25,6 +26,7 @@ export default function RichEditor({
   onChange,
   placeholder = 'Nhập nội dung...',
   minHeight = '300px',
+  maxHeight,
 }: RichEditorProps) {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -44,8 +46,8 @@ export default function RichEditor({
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: 'prose-editor outline-none',
-        style: `min-height: ${minHeight}; padding: 1rem;`,
+        class: 'prose-editor custom-scrollbar outline-none',
+        style: `min-height: ${minHeight};${maxHeight ? ` max-height: ${maxHeight}; overflow-y: auto;` : ''} padding: 1rem;`,
       }
     }
   })
