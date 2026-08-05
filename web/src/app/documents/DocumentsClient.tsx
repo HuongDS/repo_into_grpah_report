@@ -324,7 +324,7 @@ export default function DocumentsClient({
       {/* Preview Modal */}
       <AnimatePresence>
         {previewDoc && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-6">
+          <div className="fixed inset-0 z-[60]">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -336,7 +336,7 @@ export default function DocumentsClient({
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-5xl h-[85vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+              className="absolute inset-0 bg-white flex flex-col z-10"
             >
               <div className="flex justify-between items-center p-4 md:px-6 border-b border-slate-100 bg-slate-50/50">
                 <div className="flex items-center gap-3">
@@ -371,11 +371,11 @@ export default function DocumentsClient({
                 </div>
               </div>
 
-              <div className="flex-1 bg-slate-100/50 p-4 md:p-6 overflow-hidden">
+              <div className="flex-1 bg-slate-100/50 p-2 md:p-4 overflow-hidden">
                 {[".jpg", ".jpeg", ".png", ".gif", ".svg"].includes(
                   previewDoc.format?.toLowerCase(),
                 ) ? (
-                  <div className="w-full h-full flex items-center justify-center bg-white rounded-2xl border border-slate-200 p-2 shadow-inner">
+                  <div className="w-full h-full flex items-center justify-center bg-white rounded-xl shadow-sm p-2">
                     <img
                       src={previewDoc.fileUrl}
                       alt={previewDoc.title}
@@ -385,11 +385,11 @@ export default function DocumentsClient({
                 ) : previewDoc.format?.toLowerCase() === ".pdf" ? (
                   <iframe
                     src={previewDoc.fileUrl}
-                    className="w-full h-full bg-white rounded-2xl border border-slate-200 shadow-sm"
+                    className="w-full h-full bg-white rounded-xl shadow-sm"
                   />
                 ) : previewDoc.format?.toLowerCase() === ".md" ||
                   previewDoc.format?.toLowerCase() === ".txt" ? (
-                  <div className="w-full h-full bg-white rounded-2xl border border-slate-200 shadow-sm overflow-auto p-6 md-prose">
+                  <div className="w-full h-full bg-white rounded-xl shadow-sm overflow-auto p-6 md-prose">
                     {loadingMd ? (
                       <div className="flex items-center justify-center h-full">
                         <div className="w-8 h-8 border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
@@ -407,7 +407,7 @@ export default function DocumentsClient({
                 ) : (
                   <iframe
                     src={`https://docs.google.com/gview?url=${encodeURIComponent(previewDoc.fileUrl)}&embedded=true`}
-                    className="w-full h-full bg-white rounded-2xl border border-slate-200 shadow-sm"
+                    className="w-full h-full bg-white rounded-xl shadow-sm"
                   />
                 )}
               </div>

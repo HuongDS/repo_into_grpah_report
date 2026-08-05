@@ -1,27 +1,50 @@
-'use client'
+"use client";
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, ExternalLink, Download, Loader2, Eye, AlertCircle } from 'lucide-react'
-import { useEffect, useState, useCallback } from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  X,
+  ExternalLink,
+  Download,
+  Loader2,
+  Eye,
+  AlertCircle,
+} from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface DocumentViewerProps {
-  isOpen: boolean
-  onClose: () => void
-  url: string
-  format: string
-  title: string
-  uploader?: string
-  uploadDate?: string
+  isOpen: boolean;
+  onClose: () => void;
+  url: string;
+  format: string;
+  title: string;
+  uploader?: string;
+  uploadDate?: string;
 }
 
-const formatColorMap: Record<string, { bg: string; text: string; border: string }> = {
-  '.pdf': { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-100' },
-  '.md': { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100' },
-  '.html': { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-100' },
-  '.docx': { bg: 'bg-navy-50', text: 'text-navy-600', border: 'border-navy-100' },
-}
+const formatColorMap: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  ".pdf": { bg: "bg-red-50", text: "text-red-600", border: "border-red-100" },
+  ".md": {
+    bg: "bg-emerald-50",
+    text: "text-emerald-600",
+    border: "border-emerald-100",
+  },
+  ".html": {
+    bg: "bg-orange-50",
+    text: "text-orange-600",
+    border: "border-orange-100",
+  },
+  ".docx": {
+    bg: "bg-navy-50",
+    text: "text-navy-600",
+    border: "border-navy-100",
+  },
+};
 
 export default function DocumentViewer({
   isOpen,
@@ -32,59 +55,70 @@ export default function DocumentViewer({
   uploader,
   uploadDate,
 }: DocumentViewerProps) {
-  const [mdContent, setMdContent] = useState<string>('')
-  const [htmlContent, setHtmlContent] = useState<string>('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [mdContent, setMdContent] = useState<string>("");
+  const [htmlContent, setHtmlContent] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fmt = format?.toLowerCase() || ''
-  const colorScheme = formatColorMap[fmt] || { bg: 'bg-slate-50', text: 'text-slate-600', border: 'border-slate-100' }
+  const fmt = format?.toLowerCase() || "";
+  const colorScheme = formatColorMap[fmt] || {
+    bg: "bg-slate-50",
+    text: "text-slate-600",
+    border: "border-slate-100",
+  };
 
   // Prevent scroll when open
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'unset'
-    return () => { document.body.style.overflow = 'unset' }
-  }, [isOpen])
+    document.body.style.overflow = isOpen ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   // Clear state on open
   useEffect(() => {
     if (!isOpen) {
-      setMdContent('')
-      setHtmlContent('')
-      setError(null)
-      setLoading(false)
-      return
+      setMdContent("");
+      setHtmlContent("");
+      setError(null);
+      setLoading(false);
+      return;
     }
 
-    if (fmt === '.md' || fmt === '.html') {
-      setLoading(true)
-      setError(null)
+    if (fmt === ".md" || fmt === ".html") {
+      setLoading(true);
+      setError(null);
       fetch(url)
-        .then(async res => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`)
-          return res.text()
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.text();
         })
-        .then(text => {
-          if (fmt === '.md') setMdContent(text)
-          if (fmt === '.html') setHtmlContent(text)
+        .then((text) => {
+          if (fmt === ".md") setMdContent(text);
+          if (fmt === ".html") setHtmlContent(text);
         })
-        .catch(err => {
-          setError('Không thể tải nội dung file. Vui lòng thử mở trong tab mới.')
-          console.error(err)
+        .catch((err) => {
+          setError(
+            "Không thể tải nội dung file. Vui lòng thử mở trong tab mới.",
+          );
+          console.error(err);
         })
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     }
-  }, [isOpen, url, fmt])
+  }, [isOpen, url, fmt]);
 
   // Close on ESC key
-  const handleKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose()
-  }, [onClose])
+  const handleKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose],
+  );
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [handleKey])
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [handleKey]);
 
   const renderContent = () => {
     if (loading) {
@@ -94,9 +128,11 @@ export default function DocumentViewer({
             <div className="absolute inset-0 rounded-full border-4 border-navy-100"></div>
             <div className="absolute inset-0 rounded-full border-4 border-navy-600 border-t-transparent animate-spin"></div>
           </div>
-          <p className="text-slate-500 font-medium animate-pulse">Đang tải tài liệu...</p>
+          <p className="text-slate-500 font-medium animate-pulse">
+            Đang tải tài liệu...
+          </p>
         </div>
-      )
+      );
     }
 
     if (error) {
@@ -106,7 +142,9 @@ export default function DocumentViewer({
             <AlertCircle className="w-10 h-10 text-red-400" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-700 mb-2">Không thể hiển thị tài liệu</h3>
+            <h3 className="text-lg font-bold text-slate-700 mb-2">
+              Không thể hiển thị tài liệu
+            </h3>
             <p className="text-slate-500 max-w-sm">{error}</p>
           </div>
           <a
@@ -119,11 +157,11 @@ export default function DocumentViewer({
             Mở trong tab mới
           </a>
         </div>
-      )
+      );
     }
 
     // PDF: embed directly
-    if (fmt === '.pdf') {
+    if (fmt === ".pdf") {
       return (
         <iframe
           src={`${url}#toolbar=1&navpanes=1&view=FitH`}
@@ -131,16 +169,17 @@ export default function DocumentViewer({
           title={title}
           allow="fullscreen"
         />
-      )
+      );
     }
 
     // HTML: render with srcdoc so it renders, not shows source
-    if (fmt === '.html') {
-      if (!htmlContent) return (
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-8 h-8 animate-spin text-navy-500" />
-        </div>
-      )
+    if (fmt === ".html") {
+      if (!htmlContent)
+        return (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="w-8 h-8 animate-spin text-navy-500" />
+          </div>
+        );
       return (
         <iframe
           srcDoc={htmlContent}
@@ -148,12 +187,12 @@ export default function DocumentViewer({
           title={title}
           sandbox="allow-scripts allow-same-origin"
         />
-      )
+      );
     }
 
     // MD: beautiful formatted output
-    if (fmt === '.md') {
-      if (!mdContent && !loading) return null
+    if (fmt === ".md") {
+      if (!mdContent && !loading) return null;
       return (
         <div className="h-full overflow-y-auto custom-scrollbar bg-white">
           <div className="max-w-3xl mx-auto px-6 py-10 md:px-12 md:py-12">
@@ -164,7 +203,7 @@ export default function DocumentViewer({
             </div>
           </div>
         </div>
-      )
+      );
     }
 
     // Fallback
@@ -174,8 +213,13 @@ export default function DocumentViewer({
           <Download className="w-10 h-10 text-slate-400" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-700 mb-2">Định dạng chưa hỗ trợ xem trực tiếp</h3>
-          <p className="text-slate-500 max-w-sm">Trình xem hỗ trợ PDF, HTML và Markdown. Vui lòng mở file trong tab mới để xem nội dung.</p>
+          <h3 className="text-lg font-bold text-slate-700 mb-2">
+            Định dạng chưa hỗ trợ xem trực tiếp
+          </h3>
+          <p className="text-slate-500 max-w-sm">
+            Trình xem hỗ trợ PDF, HTML và Markdown. Vui lòng mở file trong tab
+            mới để xem nội dung.
+          </p>
         </div>
         <a
           href={url}
@@ -187,13 +231,21 @@ export default function DocumentViewer({
           Mở file gốc
         </a>
       </div>
-    )
-  }
+    );
+  };
 
-  return (
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center md:p-6">
+        <div className="fixed inset-0 z-[9999]">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -209,21 +261,37 @@ export default function DocumentViewer({
             initial={{ opacity: 0, scale: 0.96, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 20 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 350 }}
-            className="relative w-full md:max-w-6xl h-[92vh] md:h-[90vh] bg-white rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            transition={{ type: "spring", damping: 30, stiffness: 350 }}
+            className="absolute inset-0 bg-white flex flex-col z-10"
           >
             {/* Header Bar */}
             <div className="flex items-center justify-between px-5 md:px-7 py-4 border-b border-slate-100 shrink-0 bg-white/95 backdrop-blur-sm">
               <div className="flex items-center gap-3 min-w-0 flex-1 pr-4">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border shrink-0 ${colorScheme.bg} ${colorScheme.text} ${colorScheme.border}`}>
+                <span
+                  className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border shrink-0 ${colorScheme.bg} ${colorScheme.text} ${colorScheme.border}`}
+                >
                   {format}
                 </span>
                 <div className="min-w-0">
-                  <h2 className="font-bold text-slate-800 truncate text-sm md:text-base" title={title}>{title}</h2>
+                  <h2
+                    className="font-bold text-slate-800 truncate text-sm md:text-base"
+                    title={title}
+                  >
+                    {title}
+                  </h2>
                   {(uploader || uploadDate) && (
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {uploader && <span>Đăng bởi <span className="font-semibold text-slate-500">{uploader}</span></span>}
-                      {uploader && uploadDate && <span className="mx-1.5">·</span>}
+                      {uploader && (
+                        <span>
+                          Đăng bởi{" "}
+                          <span className="font-semibold text-slate-500">
+                            {uploader}
+                          </span>
+                        </span>
+                      )}
+                      {uploader && uploadDate && (
+                        <span className="mx-1.5">·</span>
+                      )}
                       {uploadDate && <span>{uploadDate}</span>}
                     </p>
                   )}
@@ -254,12 +322,10 @@ export default function DocumentViewer({
             <div className="flex-1 overflow-hidden bg-slate-50 relative">
               {renderContent()}
             </div>
-
-            {/* Mobile drag handle */}
-            <div className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-slate-200 rounded-full" />
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
-  )
+    </AnimatePresence>,
+    document.body,
+  );
 }
