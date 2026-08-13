@@ -101,7 +101,7 @@ export default function UploadPage() {
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">File đính kèm</label>
                 <div className="relative w-full">
-                  <input required type="file" name="file" className="w-full px-3 py-3 pl-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-navy-50 file:text-navy-700 hover:file:bg-navy-100 cursor-pointer" accept=".pdf,.docx,.md,.html" />
+                  <input required type="file" name="file" className="w-full px-3 py-3 pl-12 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-navy-50 file:text-navy-700 hover:file:bg-navy-100 cursor-pointer" accept=".pdf,.docx,.md,.html,.xlsx,.xls" />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <FileUp className="h-5 w-5 text-slate-400" />
                   </div>

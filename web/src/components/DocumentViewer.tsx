@@ -44,6 +44,16 @@ const formatColorMap: Record<
     text: "text-navy-600",
     border: "border-navy-100",
   },
+  ".xlsx": {
+    bg: "bg-green-50",
+    text: "text-green-600",
+    border: "border-green-100",
+  },
+  ".xls": {
+    bg: "bg-green-50",
+    text: "text-green-600",
+    border: "border-green-100",
+  },
 };
 
 export default function DocumentViewer({
