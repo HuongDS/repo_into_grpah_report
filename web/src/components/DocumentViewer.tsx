@@ -69,13 +69,6 @@ export default function DocumentViewer({
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   const fmt = format?.toLowerCase() || "";
   const colorScheme = formatColorMap[fmt] || {
@@ -262,6 +255,13 @@ export default function DocumentViewer({
       </div>
     );
   };
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return createPortal(
     <AnimatePresence>

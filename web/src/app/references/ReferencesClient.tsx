@@ -305,11 +305,17 @@ export default function ReferencesClient({
       <DocumentViewer
         isOpen={!!previewReport}
         onClose={() => setPreviewReport(null)}
-        url={previewReport?.fileUrl}
+        url={previewReport?.url}
         format={previewReport?.format}
         title={previewReport?.title}
         uploader={previewReport?.uploader?.username}
-        uploadDate={previewReport?.createdAt}
+        uploadDate={
+          previewReport?.createdAt
+            ? format(new Date(previewReport.createdAt), "dd MMM yyyy, HH:mm", {
+                locale: vi,
+              })
+            : undefined
+        }
       />
     </div>
   );
