@@ -404,6 +404,13 @@ export default function DocumentsClient({
                       </pre>
                     )}
                   </div>
+                ) : [".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(
+                    previewDoc.format?.toLowerCase(),
+                ) ? (
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewDoc.fileUrl)}`}
+                    className="w-full h-full bg-white rounded-xl shadow-sm"
+                  />
                 ) : (
                   <iframe
                     src={`https://docs.google.com/gview?url=${encodeURIComponent(previewDoc.fileUrl)}&embedded=true`}

@@ -216,6 +216,17 @@ export default function DocumentViewer({
       );
     }
 
+    // Office Formats: embed via Microsoft Office Online Viewer
+    if ([".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(fmt)) {
+      return (
+        <iframe
+          src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`}
+          className="w-full h-full border-0 bg-white"
+          title={title}
+        />
+      );
+    }
+
     // Fallback
     return (
       <div className="flex flex-col items-center justify-center h-full gap-6 p-8 text-center">
