@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { uploadDocument, deleteDocument } from "@/app/actions";
 import { format } from "date-fns";
@@ -45,6 +46,11 @@ export default function DocumentsClient({
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
   const [mdContent, setMdContent] = useState<string>("");
   const [loadingMd, setLoadingMd] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const userRole = session?.user?.role;
   const userId = session?.user?.id ? parseInt(session.user.id) : null;
@@ -322,213 +328,229 @@ export default function DocumentsClient({
       )}
 
       {/* Preview Modal */}
-      <AnimatePresence>
-        {previewDoc && (
-          <div className="fixed inset-0 z-[60]">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setPreviewDoc(null)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="absolute inset-0 bg-white flex flex-col z-10"
-            >
-              <div className="flex justify-between items-center p-4 md:px-6 border-b border-slate-100 bg-slate-50/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                    <FileText className="w-5 h-5 text-navy-600" />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-slate-800 line-clamp-1">
-                      {previewDoc.title}
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      {previewDoc.format?.toUpperCase().replace(".", "") ||
-                        "FILE"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={previewDoc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition-colors flex items-center gap-2 text-sm font-semibold px-4 hidden sm:flex"
-                  >
-                    <DownloadCloud className="w-4 h-4" /> Tải xuống
-                  </a>
-                  <button
-                    onClick={() => setPreviewDoc(null)}
-                    className="p-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 rounded-xl text-slate-500 transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-1 bg-slate-100/50 p-2 md:p-4 overflow-hidden">
-                {[".jpg", ".jpeg", ".png", ".gif", ".svg"].includes(
-                  previewDoc.format?.toLowerCase(),
-                ) ? (
-                  <div className="w-full h-full flex items-center justify-center bg-white rounded-xl shadow-sm p-2">
-                    <img
-                      src={previewDoc.fileUrl}
-                      alt={previewDoc.title}
-                      className="max-w-full max-h-full object-contain rounded-lg"
-                    />
-                  </div>
-                ) : previewDoc.format?.toLowerCase() === ".pdf" ? (
-                  <iframe
-                    src={previewDoc.fileUrl}
-                    className="w-full h-full bg-white rounded-xl shadow-sm"
-                  />
-                ) : previewDoc.format?.toLowerCase() === ".md" ||
-                  previewDoc.format?.toLowerCase() === ".txt" ? (
-                  <div className="w-full h-full bg-white rounded-xl shadow-sm overflow-auto p-6 md-prose">
-                    {loadingMd ? (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="w-8 h-8 border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {previewDoc && (
+              <div className="fixed inset-0 z-[9999]">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setPreviewDoc(null)}
+                  className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="absolute inset-0 bg-white flex flex-col z-10"
+                >
+                  <div className="flex justify-between items-center p-4 md:px-6 border-b border-slate-100 bg-slate-50/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                        <FileText className="w-5 h-5 text-navy-600" />
                       </div>
-                    ) : previewDoc.format?.toLowerCase() === ".md" ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {mdContent}
-                      </ReactMarkdown>
+                      <div>
+                        <h2 className="font-bold text-slate-800 line-clamp-1">
+                          {previewDoc.title}
+                        </h2>
+                        <p className="text-xs text-slate-500">
+                          {previewDoc.format?.toUpperCase().replace(".", "") ||
+                            "FILE"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={previewDoc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition-colors flex items-center gap-2 text-sm font-semibold px-4 hidden sm:flex"
+                      >
+                        <DownloadCloud className="w-4 h-4" /> Tải xuống
+                      </a>
+                      <button
+                        onClick={() => setPreviewDoc(null)}
+                        className="p-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 rounded-xl text-slate-500 transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 bg-slate-50 overflow-hidden relative">
+                    {[".jpg", ".jpeg", ".png", ".gif", ".svg"].includes(
+                      previewDoc.format?.toLowerCase(),
+                    ) ? (
+                      <div className="w-full h-full flex items-center justify-center bg-white p-4">
+                        <img
+                          src={previewDoc.fileUrl}
+                          alt={previewDoc.title}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                    ) : previewDoc.format?.toLowerCase() === ".pdf" ? (
+                      <iframe
+                        src={previewDoc.fileUrl}
+                        className="w-full h-full border-0 bg-white"
+                        allowFullScreen
+                      />
+                    ) : previewDoc.format?.toLowerCase() === ".md" ||
+                      previewDoc.format?.toLowerCase() === ".txt" ? (
+                      <div className="w-full h-full bg-white overflow-auto p-6 md-prose">
+                        {loadingMd ? (
+                          <div className="flex items-center justify-center h-full">
+                            <div className="w-8 h-8 border-4 border-navy-200 border-t-navy-600 rounded-full animate-spin"></div>
+                          </div>
+                        ) : previewDoc.format?.toLowerCase() === ".md" ? (
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {mdContent}
+                          </ReactMarkdown>
+                        ) : (
+                          <pre className="whitespace-pre-wrap font-sans text-sm">
+                            {mdContent}
+                          </pre>
+                        )}
+                      </div>
+                    ) : [
+                        ".docx",
+                        ".doc",
+                        ".xlsx",
+                        ".xls",
+                        ".pptx",
+                        ".ppt",
+                      ].includes(previewDoc.format?.toLowerCase()) ? (
+                      <iframe
+                        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewDoc.fileUrl)}`}
+                        className="w-full h-full border-0 bg-white"
+                        allowFullScreen
+                      />
                     ) : (
-                      <pre className="whitespace-pre-wrap font-sans text-sm">
-                        {mdContent}
-                      </pre>
+                      <iframe
+                        src={`https://docs.google.com/gview?url=${encodeURIComponent(previewDoc.fileUrl)}&embedded=true`}
+                        className="w-full h-full border-0 bg-white"
+                        allowFullScreen
+                      />
                     )}
                   </div>
-                ) : [".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"].includes(
-                    previewDoc.format?.toLowerCase(),
-                ) ? (
-                  <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewDoc.fileUrl)}`}
-                    className="w-full h-full bg-white rounded-xl shadow-sm"
-                  />
-                ) : (
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(previewDoc.fileUrl)}&embedded=true`}
-                    className="w-full h-full bg-white rounded-xl shadow-sm"
-                  />
-                )}
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
 
       {/* Upload Modal (existing code) */}
-      <AnimatePresence>
-        {isUploadOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsUploadOpen(false)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white rounded-3xl shadow-xl overflow-hidden"
-            >
-              <div className="p-6 md:p-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-extrabold text-slate-800">
-                    Tải lên Tài liệu
-                  </h2>
-                  <button
-                    onClick={() => setIsUploadOpen(false)}
-                    className="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleUpload} className="space-y-5">
-                  {errorMsg && (
-                    <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 font-medium text-sm">
-                      {errorMsg}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isUploadOpen && (
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsUploadOpen(false)}
+                  className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="relative w-full max-w-lg bg-white rounded-3xl shadow-xl overflow-hidden"
+                >
+                  <div className="p-6 md:p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-xl font-extrabold text-slate-800">
+                        Tải lên Tài liệu
+                      </h2>
+                      <button
+                        onClick={() => setIsUploadOpen(false)}
+                        className="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
                     </div>
-                  )}
 
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
-                      Tiêu đề tài liệu
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="title"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all"
-                      placeholder="VD: Hướng dẫn tích hợp AI"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
-                      Mô tả ngắn gọn (Tùy chọn)
-                    </label>
-                    <textarea
-                      name="description"
-                      rows={3}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all resize-none"
-                      placeholder="Mô tả nội dung tài liệu..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
-                      File đính kèm
-                    </label>
-                    <div className="relative w-full">
-                      <input
-                        required
-                        type="file"
-                        name="file"
-                        className="w-full px-3 py-2.5 pl-10 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-navy-50 file:text-navy-700 hover:file:bg-navy-100 cursor-pointer text-sm"
-                        accept=".pdf,.docx,.doc,.xlsx,.xls,.txt,.md"
-                      />
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FileUp className="h-4 w-4 text-slate-400" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setIsUploadOpen(false)}
-                      className="flex-1 py-3 text-slate-600 bg-slate-100 rounded-xl font-bold hover:bg-slate-200 transition-colors"
-                    >
-                      Hủy bỏ
-                    </button>
-                    <button
-                      disabled={loading}
-                      type="submit"
-                      className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-bold hover:bg-navy-800 transition-colors disabled:opacity-70 flex justify-center items-center gap-2 shadow-md shadow-navy-900/10"
-                    >
-                      {loading ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        "Tải lên"
+                    <form onSubmit={handleUpload} className="space-y-5">
+                      {errorMsg && (
+                        <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 font-medium text-sm">
+                          {errorMsg}
+                        </div>
                       )}
-                    </button>
+
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">
+                          Tiêu đề tài liệu
+                        </label>
+                        <input
+                          required
+                          type="text"
+                          name="title"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all"
+                          placeholder="VD: Hướng dẫn tích hợp AI"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">
+                          Mô tả ngắn gọn (Tùy chọn)
+                        </label>
+                        <textarea
+                          name="description"
+                          rows={3}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all resize-none"
+                          placeholder="Mô tả nội dung tài liệu..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">
+                          File đính kèm
+                        </label>
+                        <div className="relative w-full">
+                          <input
+                            required
+                            type="file"
+                            name="file"
+                            className="w-full px-3 py-2.5 pl-10 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-navy-500/20 focus:border-navy-500 outline-none transition-all file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-navy-50 file:text-navy-700 hover:file:bg-navy-100 cursor-pointer text-sm"
+                            accept=".pdf,.docx,.doc,.xlsx,.xls,.txt,.md"
+                          />
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <FileUp className="h-4 w-4 text-slate-400" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsUploadOpen(false)}
+                          className="flex-1 py-3 text-slate-600 bg-slate-100 rounded-xl font-bold hover:bg-slate-200 transition-colors"
+                        >
+                          Hủy bỏ
+                        </button>
+                        <button
+                          disabled={loading}
+                          type="submit"
+                          className="flex-1 py-3 bg-navy-700 text-white rounded-xl font-bold hover:bg-navy-800 transition-colors disabled:opacity-70 flex justify-center items-center gap-2 shadow-md shadow-navy-900/10"
+                        >
+                          {loading ? (
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          ) : (
+                            "Tải lên"
+                          )}
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </form>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </div>
   );
 }

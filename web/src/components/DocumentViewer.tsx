@@ -223,6 +223,7 @@ export default function DocumentViewer({
           src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`}
           className="w-full h-full border-0 bg-white"
           title={title}
+          allow="fullscreen"
         />
       );
     }
